@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // 如果使用prettier來排版時，須加上這段
+  "editor.codeActionsOnSave": {
+    // for stylelint (need to install "stylelint" "stylelint-config-standard" "stylelint-config-sass-guidelines"  in dev environment)
+    // completed command: $ npm install --save-dev stylelint stylelint-config-standard stylelint-config-sass-guidelines
+    "source.fixAll.stylelint": true // 如果使用stylelint來做css排版時，須加上這段
+  }
+}

@@ -1,0 +1,9 @@
+{
+  singleQuote: true,
+  arrowParens: 'always',
+  trailingComma: 'all',
+  semi: false,
+  jsxBracketSameLine: false,
+  printWidth: 100,
+  tabWidth: 2,
+}

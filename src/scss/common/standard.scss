@@ -1,0 +1,140 @@
+/*!
+ * Place the specific properties of the project
+ */
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* track */
+::-webkit-scrollbar-track {
+  background: rgb(25, 25, 25);
+}
+
+/* handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 20px;
+}
+
+/* handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+// ===== Light-Box =====
+.light-box {
+  @include size(100%, 100%);
+  @include flex-center();
+
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+
+  &.active {
+    opacity: 1;
+    transition: 0.8s;
+    pointer-events: auto;
+
+    .inner {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &::before {
+    @include independent();
+    @include size(100%, 100%);
+
+    top: 0;
+    left: 0;
+    background-color: rgba($color: #000, $alpha: 0.7);
+    content: '';
+  }
+
+  .inner {
+    @include size(95%, auto);
+
+    z-index: 2;
+    max-width: 900px;
+    position: relative;
+    opacity: 0;
+    transition: 0.8s 0.6s;
+    transform: translateY(10%);
+
+    .wrap {
+      padding-bottom: 56.25%;
+    }
+
+    iframe {
+      @include independent();
+      @include size(100%, 100%);
+
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+.loading {
+  &__wrap {
+    @include size(100%, 100vh);
+
+    z-index: $z-loading;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  &__animation {
+    width: 0;
+    height: 0;
+
+    &__recorder-body {
+      @include independent();
+
+      width: 298px;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    &__recorder-tape {
+      @include independent(1);
+
+      width: 188px;
+      top: 20px;
+      left: 15px;
+      transform: translate(-50%, -50%);
+    }
+
+    &__recorder-cover-on {
+      @include independent(2);
+
+      width: 211px;
+      top: 12px;
+      left: 15px;
+      transform: translate(-50%, -50%);
+    }
+
+    &__recorder-cover-off {
+      @include independent(3);
+
+      width: 195px;
+      top: 11px;
+      left: 15px;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.loading-lock {
+  @include size(100%, 100%);
+
+  position: fixed;
+  overflow: hidden;
+}

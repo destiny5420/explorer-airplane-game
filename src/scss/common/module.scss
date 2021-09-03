@@ -1,0 +1,32 @@
+* {
+  // @include border();
+
+  font-family: 'Noto Sans TC', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  @include size(100%, 100%);
+
+  overflow-x: hidden;
+}
+
+// ===== Container =====
+.container {
+  @include size(100%, auto);
+
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+.dg {
+  z-index: 1 !important;
+}

@@ -1,0 +1,113 @@
+/*!
+ * Commonly used mix / class / function
+ * Can be used to all the project.
+ */
+
+// ===== RWD =====
+$w-3xl: 1920px - 1px;
+$w-2xl: 1440px - 1px;
+$w-xl: 1280px - 1px;
+$w-lg: 1024px - 1px;
+$w-md: 768px - 1px;
+$w-sm: 640px - 1px;
+$w-m: 375px - 1px;
+$w-mm: 320px - 1px;
+
+@mixin xl2() {
+  @media screen and (max-width: $w-3xl) {
+    @content;
+  }
+}
+
+@mixin xl() {
+  @media screen and (max-width: $w-2xl) {
+    @content;
+  }
+}
+
+@mixin lg() {
+  @media screen and (max-width: $w-xl) {
+    @content;
+  }
+}
+
+@mixin md() {
+  @media screen and (max-width: $w-lg) {
+    @content;
+  }
+}
+
+@mixin sm() {
+  @media screen and (max-width: $w-md) {
+    @content;
+  }
+}
+
+@mixin m() {
+  @media screen and (max-width: $w-sm) {
+    @content;
+  }
+}
+
+@mixin mm() {
+  @media screen and (max-width: $w-m) {
+    @content;
+  }
+}
+
+$scale-2xl: 1440;
+$scale-xl: 1280;
+$scale-lg: 1024;
+$scale-md: 768;
+$scale-sm: 640;
+$scale-m: 375;
+// ===== pixel size =====
+@function vw-xl2($val) {
+  @return ($val / $scale-2xl) * 100vw;
+}
+
+@function vw-xl($val) {
+  @return ($val / $scale-xl) * 100vw;
+}
+
+@function vw-lg($val) {
+  @return ($val / $scale-lg) * 100vw;
+}
+
+@function vw-md($val) {
+  @return ($val / $scale-md) * 100vw;
+}
+
+@function vw-sm($val) {
+  @return ($val / $scale-sm) * 100vw;
+}
+
+@function vw-m($val) {
+  @return ($val / $scale-m) * 100vw;
+}
+
+// ===== Mixin =====
+@mixin border($width: 1px) {
+  box-shadow: 0 0 2px #000;
+}
+
+@mixin size($w, $h: $w) {
+  width: $w;
+  height: $h;
+}
+
+@mixin independent($zIndex: 1) {
+  z-index: $zIndex;
+  position: absolute;
+}
+
+@mixin flex-center($dir: row) {
+  display: flex;
+  flex-direction: $dir;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin aspect-ratio($w, $h) {
+  padding-bottom: ($h / $w) * 100%;
+}

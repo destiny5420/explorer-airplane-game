@@ -1,0 +1,179 @@
+// === font align ===
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.md-text-left {
+  @include md() {
+    text-align: left;
+  }
+}
+
+.md-text-right {
+  @include md() {
+    text-align: right;
+  }
+}
+
+.md-text-center {
+  @include md() {
+    text-align: center;
+  }
+}
+
+.md-text-justify {
+  @include md() {
+    text-align: justify;
+  }
+}
+
+.m-text-left {
+  @include m() {
+    text-align: left;
+  }
+}
+
+.m-text-right {
+  @include m() {
+    text-align: right;
+  }
+}
+
+.m-text-center {
+  @include m() {
+    text-align: center;
+  }
+}
+
+.m-text-justify {
+  @include m() {
+    text-align: justify;
+  }
+}
+
+// === font size ===
+.f-12 {
+  font-size: 12px;
+}
+
+.f-13 {
+  font-size: 13px;
+}
+
+.f-14 {
+  font-size: 14px;
+}
+
+.f-18 {
+  font-size: 18px;
+}
+
+.f-20 {
+  font-size: 20px;
+}
+
+.f-24 {
+  font-size: 24px;
+}
+
+.f-26 {
+  font-size: 26px;
+}
+
+.f-28 {
+  font-size: 28px;
+}
+
+.f-30 {
+  font-size: 30px;
+}
+
+.f-36 {
+  font-size: 36px;
+}
+
+.f-48 {
+  font-size: 48px;
+}
+
+.f-60 {
+  font-size: 60px;
+}
+
+.f-64 {
+  font-size: 64px;
+}
+
+.f-72 {
+  font-size: 72px;
+}
+
+.md-f-18 {
+  @include md() {
+    font-size: 18px !important;
+  }
+}
+
+.md-f-20 {
+  @include md() {
+    font-size: 20px !important;
+  }
+}
+
+.md-f-24 {
+  @include md() {
+    font-size: 24px !important;
+  }
+}
+
+.md-f-26 {
+  @include md() {
+    font-size: 26px !important;
+  }
+}
+
+.md-f-40 {
+  @include md() {
+    font-size: 40px !important;
+  }
+}
+
+.m-f-18 {
+  @include m() {
+    font-size: 18px !important;
+  }
+}
+
+.m-f-20 {
+  @include m() {
+    font-size: 20px !important;
+  }
+}
+
+.m-f-24 {
+  @include m() {
+    font-size: 24px !important;
+  }
+}
+
+.m-f-36 {
+  @include m() {
+    font-size: 36px !important;
+  }
+}
+
+.f-bold {
+  font-weight: bold;
+}

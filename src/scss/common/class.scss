@@ -1,0 +1,389 @@
+// ===== Padding Bottom (img / video) =====
+.aspect-ratio {
+  height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.aspect-ratio-obj {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+// ===== Display =====
+.pc-only {
+  @include sm() {
+    display: none !important;
+  }
+}
+
+.display-none {
+  display: none !important;
+}
+
+.pad-disabled {
+  @include sm() {
+    display: none !important;
+  }
+}
+
+.pad-enabled {
+  display: none !important;
+
+  @include sm() {
+    display: block !important;
+  }
+}
+
+.mobile-disabled {
+  @include m() {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  display: none !important;
+
+  @include m() {
+    display: block !important;
+  }
+}
+
+// ===== layout =====
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.pad-flex {
+  @include sm() {
+    display: flex;
+  }
+}
+
+.m-flex {
+  @include m() {
+    display: flex;
+  }
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.pad-flex-row {
+  @include sm() {
+    flex-direction: row;
+  }
+}
+
+.m-flex-row {
+  @include m() {
+    flex-direction: row;
+  }
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.pad-flex-column {
+  @include sm() {
+    flex-direction: column;
+  }
+}
+
+.m-flex-column {
+  @include m() {
+    flex-direction: column;
+  }
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.pad-justify-start {
+  @include sm() {
+    justify-content: flex-start;
+  }
+}
+
+.m-justify-start {
+  @include m() {
+    justify-content: flex-start;
+  }
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.pad-justify-end {
+  @include sm() {
+    justify-content: flex-end;
+  }
+}
+
+.m-justify-end {
+  @include m() {
+    justify-content: flex-end;
+  }
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.pad-justify-center {
+  @include sm() {
+    justify-content: center;
+  }
+}
+
+.m-justify-center {
+  @include m() {
+    justify-content: center;
+  }
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.pad-justify-between {
+  @include sm() {
+    justify-content: space-between;
+  }
+}
+
+.m-justify-between {
+  @include m() {
+    justify-content: space-between;
+  }
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.pad-justify-around {
+  @include sm() {
+    justify-content: space-around;
+  }
+}
+
+.m-justify-around {
+  @include m() {
+    justify-content: space-around;
+  }
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+.pad-justify-evenly {
+  @include sm() {
+    justify-content: space-evenly;
+  }
+}
+
+.m-justify-evenly {
+  @include m() {
+    justify-content: space-evenly;
+  }
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.pad-items-start {
+  @include sm() {
+    align-items: flex-start;
+  }
+}
+
+.m-items-start {
+  @include m() {
+    align-items: flex-start;
+  }
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.pad-items-end {
+  @include sm() {
+    align-items: flex-end;
+  }
+}
+
+.m-items-end {
+  @include m() {
+    align-items: flex-end;
+  }
+}
+
+.items-center {
+  align-items: center;
+}
+
+.pad-items-center {
+  @include sm() {
+    align-items: center;
+  }
+}
+
+.m-items-center {
+  @include m() {
+    align-items: center;
+  }
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+.pad-items-stretch {
+  @include sm() {
+    align-items: stretch;
+  }
+}
+
+.m-items-stretch {
+  @include m() {
+    align-items: stretch;
+  }
+}
+
+.leading-1 {
+  line-height: 1;
+}
+
+.pad-leading-1 {
+  @include sm() {
+    line-height: 1;
+  }
+}
+
+.m-leading-1 {
+  @include m() {
+    line-height: 1;
+  }
+}
+
+.leading-1_5 {
+  line-height: 1.5;
+}
+
+.pad-leading-1_5 {
+  @include sm() {
+    line-height: 1.5;
+  }
+}
+
+.m-leading-1_5 {
+  @include m() {
+    line-height: 1.5;
+  }
+}
+
+.leading-2 {
+  line-height: 2;
+}
+
+.pad-leading-2 {
+  @include sm() {
+    line-height: 2;
+  }
+}
+
+.m-leading-2 {
+  @include m() {
+    line-height: 2;
+  }
+}
+
+// height
+.h-full {
+  height: 100%;
+}
+
+.pad-h-full {
+  @include sm() {
+    height: 100%;
+  }
+}
+
+.m-h-full {
+  @include m() {
+    height: 100%;
+  }
+}
+
+// width
+.w-full {
+  width: 100%;
+}
+
+.pad-w-full {
+  @include sm() {
+    width: 100%;
+  }
+}
+
+.m-w-full {
+  @include m() {
+    width: 100%;
+  }
+}
+
+// ===== Pointer =====
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.pointer-none {
+  pointer-events: none;
+}
+
+.pointer-auto {
+  pointer-events: auto;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.no-point {
+  list-style: none;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.no-break {
+  word-break: keep-all;
+}
+
+.inline-block {
+  display: inline-block;
+}

@@ -1,0 +1,32 @@
+/*!
+ * The color collection
+ */
+$color-orange: #ff561c;
+$color-white: #fff;
+$color-black: #000;
+$color-gray: #525f6b;
+$color-blue: #00ebe8;
+
+.color-white {
+  color: $color-white;
+}
+
+.color-black {
+  color: $color-black;
+}
+
+.color-gray {
+  color: $color-gray;
+}
+
+.color-blue {
+  color: $color-blue;
+}
+
+.color-orange {
+  color: $color-orange;
+}
+
+.color-bg-orange {
+  background-color: $color-orange;
+}
