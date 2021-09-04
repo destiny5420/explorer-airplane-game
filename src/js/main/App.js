@@ -2,7 +2,72 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
 
+const Colors = {
+  red: 0xf25346,
+  white: 0xd8d0d1,
+  brown: 0x59332e,
+  pink: 0xf5986e,
+  brownDark: 0x23190f,
+  blue: 0x68c3c0,
+}
+
+const Sea = function () {
+  const geom = new THREE.CylinderGeometry(600, 600, 800, 40, 10)
+
+  geom.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
+
+  const mat = new THREE.MeshPhongMaterial({
+    color: Colors.blue,
+    transparent: true,
+    opacity: 6,
+    flatShading: THREE.FlatShading,
+  })
+
+  this.mesh = new THREE.Mesh(geom, mat)
+
+  this.mesh.receiveShadow = true
+}
+
+const Cloud = function () {
+  this.mesh = new THREE.Object3D()
+
+  const geom = new THREE.BoxGeometry(20, 20, 20)
+
+  const mat = new THREE.MeshPhongMaterial({
+    color: Colors.white,
+  })
+
+  const blockCnt = 3 + Math.floor(Math.random() * 3)
+
+  for (let i = 0; i < blockCnt; i += 1) {
+    const m = new THREE.Mesh(geom, mat)
+
+    m.position.x = i * 15
+    m.position.y = Math.random() * 10
+    m.position.z = Math.random() * 10
+    m.rotation.z = Math.random() * Math.PI * 2
+    m.rotation.y = Math.random() * Math.PI * 2
+
+    const scale = 0.1 + Math.random() * 0.9
+    m.scale.set(scale, scale, scale)
+
+    m.castShadow = true
+    m.receiveShadow = true
+
+    this.mesh.add(m)
+  }
+}
+
+const createSea = function () {
+  const self = this
+
+  const sea = new Sea()
+  sea.mesh.position.y = -600
+  self.scene.add(sea.mesh)
+}
+
 function App() {
+  const self = this
   console.log('The construct of App.')
 
   /**
@@ -15,20 +80,34 @@ function App() {
   const canvas = document.querySelector('canvas.webgl')
 
   // Scene
-  const scene = new THREE.Scene()
+  self.scene = new THREE.Scene()
+  self.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950)
 
   /**
    * Lights
    */
-  // Ambient light
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.25)
-  gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
-  scene.add(ambientLight)
+
+  // Hemisphere light
+  const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9)
 
   // Directional light
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4)
-  directionalLight.castShadow = true
-  scene.add(directionalLight)
+  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.9)
+
+  shadowLight.position.set(150, 350, 350)
+  shadowLight.castShadow = true
+
+  shadowLight.shadow.camera.left = -400
+  shadowLight.shadow.camera.right = 400
+  shadowLight.shadow.camera.top = 400
+  shadowLight.shadow.camera.bottom = -400
+  shadowLight.shadow.camera.near = 1
+  shadowLight.shadow.camera.far = 1000
+
+  shadowLight.shadow.mapSize.width = 2048
+  shadowLight.shadow.mapSize.height = 2048
+
+  self.scene.add(hemisphereLight)
+  self.scene.add(shadowLight)
 
   /**
    * Materials
@@ -49,7 +128,9 @@ function App() {
   plane.position.y = -0.5
   plane.receiveShadow = true
 
-  scene.add(sphere, plane)
+  self.scene.add(sphere, plane)
+
+  createSea.call(self)
 
   /**
    * Sizes
@@ -63,11 +144,11 @@ function App() {
    * Camera
    */
   // Base camera
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-  camera.position.x = 1
-  camera.position.y = 1
-  camera.position.z = 2
-  scene.add(camera)
+  const camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
+  camera.position.x = 0
+  camera.position.y = 200
+  camera.position.z = 100
+  self.scene.add(camera)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)
@@ -77,6 +158,8 @@ function App() {
    * Renderer
    */
   const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: true,
     canvas: canvas,
   })
   renderer.shadowMap.enabled = true
@@ -96,7 +179,7 @@ function App() {
     controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    renderer.render(self.scene, camera)
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

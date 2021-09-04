@@ -13,11 +13,12 @@ body {
 
 // ===== Container =====
 .container {
-  @include size(100%, auto);
+  @include size(100%, 100vh);
 
   z-index: 1;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(#e4e0ba, #f7d9aa);
 }
 
 .webgl {
