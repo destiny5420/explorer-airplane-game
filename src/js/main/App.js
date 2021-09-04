@@ -58,12 +58,47 @@ const Cloud = function () {
   }
 }
 
+const Sky = function () {
+  this.mesh = new THREE.Object3D()
+
+  this.cloudCnt = 20
+
+  const stepAngle = (Math.PI * 2) / this.cloudCnt
+
+  for (let i = 0; i < this.cloudCnt; i += 1) {
+    const cloud = new Cloud()
+
+    const a = stepAngle * i
+    const h = 750 + Math.random() * 200
+
+    cloud.mesh.position.y = Math.sin(a) * h
+    cloud.mesh.position.x = Math.cos(a) * h
+
+    cloud.mesh.rotation.z = a + Math.PI / 2
+
+    cloud.mesh.position.z = -400 - Math.random() * 400
+
+    const scale = 1 + Math.random() * 2
+    cloud.mesh.scale.set(scale, scale, scale)
+
+    this.mesh.add(cloud.mesh)
+  }
+}
+
 const createSea = function () {
   const self = this
 
   const sea = new Sea()
   sea.mesh.position.y = -600
   self.scene.add(sea.mesh)
+}
+
+const createSky = function () {
+  const self = this
+
+  const sky = new Sky()
+  sky.mesh.position.y = -600
+  self.scene.add(sky.mesh)
 }
 
 function App() {
@@ -131,6 +166,7 @@ function App() {
   self.scene.add(sphere, plane)
 
   createSea.call(self)
+  createSky.call(self)
 
   /**
    * Sizes
