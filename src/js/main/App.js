@@ -85,20 +85,107 @@ const Sky = function () {
   }
 }
 
+const AirPlane = function () {
+  this.mesh = new THREE.Object3D()
+
+  // Create the cabin
+  const geomCockpit = new THREE.BoxGeometry(60, 50, 50, 1, 1, 1)
+  const matCockpit = new THREE.MeshPhongMaterial({
+    color: Colors.red,
+    flatShading: THREE.FlatShading,
+  })
+  const cockpit = new THREE.Mesh(geomCockpit, matCockpit)
+  cockpit.castShadow = true
+  cockpit.receiveShadow = true
+  this.mesh.add(cockpit)
+
+  // Create the engine
+  const geomEngine = new THREE.BoxGeometry(20, 50, 50, 1, 1, 1)
+  const matEngine = new THREE.MeshPhongMaterial({
+    color: Colors.white,
+    flatShading: THREE.FlatShading,
+  })
+  const engine = new THREE.Mesh(geomEngine, matEngine)
+  engine.position.x = 40
+  engine.castShadow = true
+  engine.receiveShadow = true
+  this.mesh.add(engine)
+
+  // Create the tail
+  const geomTailPlane = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1)
+  const matTailPlane = new THREE.MeshPhongMaterial({
+    color: Colors.red,
+    flatShading: THREE.FlatShading,
+  })
+  const tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane)
+  tailPlane.position.set(-35, 25, 0)
+  tailPlane.castShadow = true
+  tailPlane.receiveShadow = true
+  this.mesh.add(tailPlane)
+
+  // Create the wing
+  const geomSideWing = new THREE.BoxGeometry(40, 8, 150, 1, 1, 1)
+  const matSideWing = new THREE.MeshPhongMaterial({
+    color: Colors.red,
+    flatShading: THREE.FlatShading,
+  })
+  const sideWing = new THREE.Mesh(geomSideWing, matSideWing)
+  sideWing.castShadow = true
+  sideWing.receiveShadow = true
+  this.mesh.add(sideWing)
+
+  // propeller
+  const geomPropeller = new THREE.BoxGeometry(20, 10, 10, 1, 1, 1)
+  const matPropeller = new THREE.MeshPhongMaterial({
+    color: Colors.brown,
+    flatShading: THREE.FlatShading,
+  })
+  this.propeller = new THREE.Mesh(geomPropeller, matPropeller)
+  this.propeller.castShadow = true
+  this.propeller.receiveShadow = true
+
+  // blades
+  const geomBlade = new THREE.BoxGeometry(1, 100, 20, 1, 1, 1)
+  const matBlade = new THREE.MeshPhongMaterial({
+    color: Colors.brownDark,
+    flatShading: THREE.FlatShading,
+  })
+
+  const blade = new THREE.Mesh(geomBlade, matBlade)
+  blade.position.set(8, 0, 0)
+  blade.castShadow = true
+  blade.receiveShadow = true
+  this.propeller.add(blade)
+  this.propeller.position.set(50, 0, 0)
+  this.mesh.add(this.propeller)
+}
+
+let sea = null
 const createSea = function () {
   const self = this
 
-  const sea = new Sea()
+  sea = new Sea()
   sea.mesh.position.y = -600
   self.scene.add(sea.mesh)
 }
 
+let sky = null
 const createSky = function () {
   const self = this
 
-  const sky = new Sky()
+  sky = new Sky()
   sky.mesh.position.y = -600
   self.scene.add(sky.mesh)
+}
+
+let airPlane = null
+const createAirPlane = function () {
+  const self = this
+
+  airPlane = new AirPlane()
+  airPlane.mesh.scale.set(0.25, 0.25, 0.25)
+  airPlane.mesh.position.y = 100
+  self.scene.add(airPlane.mesh)
 }
 
 function App() {
@@ -155,18 +242,10 @@ function App() {
   /**
    * Objects
    */
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material)
-  sphere.castShadow = true
-
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material)
-  plane.rotation.x = -Math.PI * 0.5
-  plane.position.y = -0.5
-  plane.receiveShadow = true
-
-  self.scene.add(sphere, plane)
 
   createSea.call(self)
   createSky.call(self)
+  createAirPlane.call(self)
 
   /**
    * Sizes
@@ -213,6 +292,10 @@ function App() {
 
     // Update controls
     controls.update()
+
+    airPlane.propeller.rotation.x += 0.3
+    sea.mesh.rotation.z += 0.005
+    sky.mesh.rotation.z += 0.001
 
     // Render
     renderer.render(self.scene, camera)
