@@ -13,40 +13,49 @@ const Colors = {
   blue: 0x68c3c0,
 }
 
-const cameraData = {
-  gameToResultDuration: 1,
-  gamePos: {
-    x: -235.104,
-    y: 205.22,
-    z: 118.99,
+const objData = {
+  camera: {
+    gameToResultDuration: 1,
+    gamePos: {
+      x: -235.104,
+      y: 205.22,
+      z: 118.99,
+    },
+    gameRot: {
+      x: -1.143,
+      y: -1.048,
+      z: -1.086,
+    },
+    resultPos: {
+      x: 83.521,
+      y: 118.229,
+      z: 70.522,
+    },
+    resultRot: {
+      x: -1.132,
+      y: 1.054,
+      z: 1.075,
+    },
   },
-  gameRot: {
-    x: -1.143,
-    y: -1.048,
-    z: -1.086,
-  },
-  resultPos: {
-    x: 83.521,
-    y: 118.229,
-    z: 70.522,
-  },
-  resultRot: {
-    x: -1.132,
-    y: 1.054,
-    z: 1.075,
-  },
-}
-
-const airPlaneData = {
-  resultPos: {
-    x: 0,
-    y: 90,
-    z: 3,
+  airPlane: {
+    resultPos: {
+      x: 0,
+      y: 90,
+      z: 3,
+    },
   },
 }
 
 const gameData = {
   status: 0, // 0: idle / 1: playing / 2: game over
+  planeDefaultHeight: 100,
+}
+
+const environmentData = {
+  sea: {
+    radius: 600,
+    length: 800,
+  },
 }
 
 const sizes = {
@@ -58,7 +67,13 @@ let camera = null
 let renderer = null
 
 const Sea = function () {
-  const geom = new THREE.CylinderGeometry(600, 600, 800, 40, 10)
+  const geom = new THREE.CylinderGeometry(
+    environmentData.sea.radius,
+    environmentData.sea.radius,
+    environmentData.sea.length,
+    40,
+    10,
+  )
 
   geom.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
 
@@ -206,12 +221,26 @@ const AirPlane = function () {
   this.mesh.add(this.propeller)
 }
 
+const Coin = function () {
+  const geom = new THREE.TetrahedronBufferGeometry(5, 0)
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0x009999,
+    shininess: 0,
+    specular: 0xffffff,
+    flatShading: THREE.FlatShading,
+  })
+  this.mesh = new THREE.Mesh(geom, mat)
+  this.mesh.castShadow = true
+  this.angle = 0
+  this.dist = 0
+}
+
 let sea = null
 const createSea = function () {
   const self = this
 
   sea = new Sea()
-  sea.mesh.position.y = -600
+  sea.mesh.position.y = -environmentData.sea.radius
   self.scene.add(sea.mesh)
 }
 
@@ -230,12 +259,26 @@ const createAirPlane = function () {
 
   airPlane = new AirPlane()
   airPlane.mesh.scale.set(0.25, 0.25, 0.25)
-  airPlane.mesh.position.y = 100
+  airPlane.mesh.position.y = gameData.planeDefaultHeight
   self.scene.add(airPlane.mesh)
 }
 
-let prevMouseX = 0
+const CoinManager = function (count) {
+  this.mesh = new THREE.Object3D()
 
+  this.coinsInUse = []
+  this.coinsPool = []
+  for (let i = 0; i < count; i += 1) {
+    const coin = new Coin()
+    this.coinsPool.push(coin)
+  }
+}
+
+CoinManager.prototype.spawnCoins = function () {
+  const coinCount = 1 + Math.floor(Math.random() * 10)
+}
+
+let prevMouseX = 0
 let mousePos = {
   x: 0.0,
   y: 0.0,
@@ -265,41 +308,41 @@ const cameraMoveToResult = function () {
     .fromTo(
       camera.position,
       {
-        x: cameraData.gamePos.x,
-        y: cameraData.gamePos.y,
-        z: cameraData.gamePos.z,
+        x: objData.camera.gamePos.x,
+        y: objData.camera.gamePos.y,
+        z: objData.camera.gamePos.z,
       },
       {
-        x: cameraData.resultPos.x,
-        y: cameraData.resultPos.y,
-        z: cameraData.resultPos.z,
-        duration: cameraData.gameToResultDuration,
+        x: objData.camera.resultPos.x,
+        y: objData.camera.resultPos.y,
+        z: objData.camera.resultPos.z,
+        duration: objData.camera.gameToResultDuration,
         ease: 'none',
       },
     )
     .fromTo(
       camera.rotation,
       {
-        x: cameraData.gameRot.x,
-        y: cameraData.gameRot.y,
-        z: cameraData.gameRot.z,
+        x: objData.camera.gameRot.x,
+        y: objData.camera.gameRot.y,
+        z: objData.camera.gameRot.z,
       },
       {
-        x: cameraData.resultRot.x,
-        y: cameraData.resultRot.y,
-        z: cameraData.resultRot.z,
-        duration: cameraData.gameToResultDuration,
+        x: objData.camera.resultRot.x,
+        y: objData.camera.resultRot.y,
+        z: objData.camera.resultRot.z,
+        duration: objData.camera.gameToResultDuration,
         ease: 'none',
       },
-      `-=${cameraData.gameToResultDuration}`,
+      `-=${objData.camera.gameToResultDuration}`,
     )
 }
 
 const airplaneMoveToResult = function () {
   gsap.timeline().to(airPlane.mesh.position, {
-    x: airPlaneData.resultPos.x,
-    y: airPlaneData.resultPos.y,
-    z: airPlaneData.resultPos.z,
+    x: objData.airPlane.resultPos.x,
+    y: objData.airPlane.resultPos.y,
+    z: objData.airPlane.resultPos.z,
   })
 }
 
@@ -377,12 +420,6 @@ function App() {
   const self = this
   console.log('The construct of App.')
 
-  /**
-   * Base
-   */
-  // Debug
-  const gui = new dat.GUI()
-
   // Canvas
   const canvas = document.querySelector('canvas.webgl')
 
@@ -416,18 +453,6 @@ function App() {
   self.scene.add(hemisphereLight)
   self.scene.add(shadowLight)
 
-  /**
-   * Materials
-   */
-  const material = new THREE.MeshStandardMaterial()
-  material.roughness = 0.7
-  gui.add(material, 'metalness').min(0).max(1).step(0.001)
-  gui.add(material, 'roughness').min(0).max(1).step(0.001)
-
-  /**
-   * Objects
-   */
-
   createSea.call(self)
   createSky.call(self)
   createAirPlane.call(self)
@@ -437,12 +462,12 @@ function App() {
    */
   // Base camera
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
-  camera.position.x = cameraData.gamePos.x
-  camera.position.y = cameraData.gamePos.y
-  camera.position.z = cameraData.gamePos.z
-  camera.rotation.x = cameraData.gameRot.x
-  camera.rotation.y = cameraData.gameRot.y
-  camera.rotation.z = cameraData.gameRot.z
+  camera.position.x = objData.camera.gamePos.x
+  camera.position.y = objData.camera.gamePos.y
+  camera.position.z = objData.camera.gamePos.z
+  camera.rotation.x = objData.camera.gameRot.x
+  camera.rotation.y = objData.camera.gameRot.y
+  camera.rotation.z = objData.camera.gameRot.z
   self.scene.add(camera)
 
   // Controls÷
