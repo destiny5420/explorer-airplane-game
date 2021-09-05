@@ -2,7 +2,8 @@ import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
-import { CODE_ENTER } from 'keycode-js'
+import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
+import { type } from 'jquery'
 
 const Colors = {
   red: 0xf25346,
@@ -38,6 +39,10 @@ const objData = {
     },
   },
   airPlane: {
+    maxY: 150,
+    minY: 10,
+    maxZ: 250,
+    minZ: -120,
     resultPos: {
       x: 0,
       y: 90,
@@ -65,6 +70,10 @@ const sizes = {
 
 let camera = null
 let renderer = null
+let sea = null
+let sky = null
+let airPlane = null
+let ambientLight = null
 
 const Sea = function () {
   const geom = new THREE.CylinderGeometry(
@@ -235,7 +244,6 @@ const Coin = function () {
   this.dist = 0
 }
 
-let sea = null
 const createSea = function () {
   const self = this
 
@@ -244,7 +252,6 @@ const createSea = function () {
   self.scene.add(sea.mesh)
 }
 
-let sky = null
 const createSky = function () {
   const self = this
 
@@ -253,7 +260,6 @@ const createSky = function () {
   self.scene.add(sky.mesh)
 }
 
-let airPlane = null
 const createAirPlane = function () {
   const self = this
 
@@ -351,8 +357,8 @@ const updatePlane = function () {
     return
   }
 
-  const targetY = normalize(mousePos.y, -0.5, 0.5, 10, 130)
-  const targetZ = normalize(mousePos.x, -0.75, 0.75, -100, 200)
+  const targetY = normalize(mousePos.y, -0.5, 0.5, objData.airPlane.minY, objData.airPlane.maxY)
+  const targetZ = normalize(mousePos.x, -0.75, 0.75, objData.airPlane.minZ, objData.airPlane.maxZ)
 
   airPlane.mesh.position.y += (targetY - airPlane.mesh.position.y) * 0.1
   airPlane.mesh.position.z += (targetZ - airPlane.mesh.position.z) * 0.05
@@ -406,10 +412,17 @@ const eventObj = function () {
   })
 
   window.addEventListener('keyup', function (e) {
-    if (e.code === CODE_ENTER) {
-      gameData.status = 2
-      cameraMoveToResult()
-      airplaneMoveToResult()
+    switch (e.code) {
+      case CODE_ENTER:
+        gameData.status = 2
+        cameraMoveToResult()
+        airplaneMoveToResult()
+        break
+      case CODE_A:
+        ambientLight.intensity = 2
+        break
+      default:
+        break
     }
   })
 
@@ -434,6 +447,8 @@ function App() {
   // Hemisphere light
   const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9)
 
+  ambientLight = new THREE.AmbientLight(0xdc8874, 0.5)
+  ambientLight.intensity = 0
   // Directional light
   const shadowLight = new THREE.DirectionalLight(0xffffff, 0.9)
 
@@ -452,6 +467,7 @@ function App() {
 
   self.scene.add(hemisphereLight)
   self.scene.add(shadowLight)
+  self.scene.add(ambientLight)
 
   createSea.call(self)
   createSky.call(self)
@@ -490,9 +506,16 @@ function App() {
    */
   const clock = new THREE.Clock()
 
+  let oldTime
+  let deltaTime
+  let newTime
+
   const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
+    newTime = new Date().getTime()
+    deltaTime = newTime - oldTime
+    oldTime = newTime
     // // Update controls
     // if (gameData.status !== 2) {
 
@@ -503,6 +526,12 @@ function App() {
     sky.mesh.rotation.z += 0.001
 
     updatePlane()
+
+    if (ambientLight.intensity < 0.005) {
+      ambientLight.intensity = 0
+    } else {
+      ambientLight.intensity += (0.0 - ambientLight.intensity) * deltaTime * 0.005
+    }
 
     // Render
     renderer.render(self.scene, camera)
