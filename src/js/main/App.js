@@ -308,11 +308,14 @@ const updatePlane = function () {
     return
   }
 
-  const targetZ = normalize(mousePos.x, -0.75, 0.75, -100, 200)
   const targetY = normalize(mousePos.y, -0.5, 0.5, 10, 130)
+  const targetZ = normalize(mousePos.x, -0.75, 0.75, -100, 200)
 
-  airPlane.mesh.position.y = targetY
-  airPlane.mesh.position.z = targetZ
+  airPlane.mesh.position.y += (targetY - airPlane.mesh.position.y) * 0.1
+  airPlane.mesh.position.z += (targetZ - airPlane.mesh.position.z) * 0.05
+  airPlane.mesh.rotation.z = (targetY - airPlane.mesh.position.y) * 0.0128
+  airPlane.mesh.rotation.y = (airPlane.mesh.position.y - targetY) * 0.005
+
   airPlane.propeller.rotation.x += 0.3
 
   // console.log(
