@@ -2,6 +2,7 @@ import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
+import { CODE_ENTER } from 'keycode-js'
 
 const Colors = {
   red: 0xf25346,
@@ -11,6 +12,50 @@ const Colors = {
   brownDark: 0x23190f,
   blue: 0x68c3c0,
 }
+
+const cameraData = {
+  gameToResultDuration: 1,
+  gamePos: {
+    x: -235.104,
+    y: 205.22,
+    z: 118.99,
+  },
+  gameRot: {
+    x: -1.143,
+    y: -1.048,
+    z: -1.086,
+  },
+  resultPos: {
+    x: 83.521,
+    y: 118.229,
+    z: 70.522,
+  },
+  resultRot: {
+    x: -1.132,
+    y: 1.054,
+    z: 1.075,
+  },
+}
+
+const airPlaneData = {
+  resultPos: {
+    x: 0,
+    y: 90,
+    z: 3,
+  },
+}
+
+const gameData = {
+  status: 0, // 0: idle / 1: playing / 2: game over
+}
+
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+}
+
+let camera = null
+let renderer = null
 
 const Sea = function () {
   const geom = new THREE.CylinderGeometry(600, 600, 800, 40, 10)
@@ -214,21 +259,65 @@ const normalize = function (v, vmin, vmax, tmin, tmax) {
   return tv
 }
 
+const cameraMoveToResult = function () {
+  gsap
+    .timeline()
+    .fromTo(
+      camera.position,
+      {
+        x: cameraData.gamePos.x,
+        y: cameraData.gamePos.y,
+        z: cameraData.gamePos.z,
+      },
+      {
+        x: cameraData.resultPos.x,
+        y: cameraData.resultPos.y,
+        z: cameraData.resultPos.z,
+        duration: cameraData.gameToResultDuration,
+        ease: 'none',
+      },
+    )
+    .fromTo(
+      camera.rotation,
+      {
+        x: cameraData.gameRot.x,
+        y: cameraData.gameRot.y,
+        z: cameraData.gameRot.z,
+      },
+      {
+        x: cameraData.resultRot.x,
+        y: cameraData.resultRot.y,
+        z: cameraData.resultRot.z,
+        duration: cameraData.gameToResultDuration,
+        ease: 'none',
+      },
+      `-=${cameraData.gameToResultDuration}`,
+    )
+}
+
+const airplaneMoveToResult = function () {
+  gsap.timeline().to(airPlane.mesh.position, {
+    x: airPlaneData.resultPos.x,
+    y: airPlaneData.resultPos.y,
+    z: airPlaneData.resultPos.z,
+  })
+}
+
 const updatePlane = function () {
-  const targetZ = normalize(mousePos.x, -1, 1, -100, 100)
-  let targetY = normalize(mousePos.y, -1, 1, -50, 150)
-
-  if (targetY > 100) {
-    targetY = 100
+  if (gameData.status === 2) {
+    return
   }
 
-  if (targetY < 10) {
-    targetY = 10
-  }
+  const targetZ = normalize(mousePos.x, -0.75, 0.75, -100, 200)
+  const targetY = normalize(mousePos.y, -0.5, 0.5, 10, 130)
 
   airPlane.mesh.position.y = targetY
   airPlane.mesh.position.z = targetZ
   airPlane.propeller.rotation.x += 0.3
+
+  // console.log(
+  //   `airPlane / x: ${airPlane.mesh.position.x} / y: ${airPlane.mesh.position.y} / z: ${airPlane.mesh.position.z}`,
+  // )
 
   if (prevMouseX > mousePos.x) {
     gsap.timeline().to(airPlane.mesh.rotation, {
@@ -251,6 +340,34 @@ const updatePlane = function () {
   }
 
   prevMouseX = mousePos.x
+}
+
+const eventObj = function () {
+  const self = this
+
+  window.addEventListener('resize', () => {
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  })
+
+  window.addEventListener('keyup', function (e) {
+    if (e.code === CODE_ENTER) {
+      gameData.status = 2
+      cameraMoveToResult()
+      airplaneMoveToResult()
+    }
+  })
+
+  document.addEventListener('mousemove', handleMouseMove, false)
 }
 
 function App() {
@@ -313,31 +430,24 @@ function App() {
   createAirPlane.call(self)
 
   /**
-   * Sizes
-   */
-  const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  }
-
-  /**
    * Camera
    */
   // Base camera
-  const camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
-  camera.position.x = 0
-  camera.position.y = 200
-  camera.position.z = 100
+  camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
+  camera.position.x = cameraData.gamePos.x
+  camera.position.y = cameraData.gamePos.y
+  camera.position.z = cameraData.gamePos.z
+  camera.rotation.x = cameraData.gameRot.x
+  camera.rotation.y = cameraData.gameRot.y
+  camera.rotation.z = cameraData.gameRot.z
   self.scene.add(camera)
 
-  // Controls
-  const controls = new OrbitControls(camera, canvas)
-  controls.enableDamping = true
+  // Controls÷
 
   /**
    * Renderer
    */
-  const renderer = new THREE.WebGLRenderer({
+  renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
     canvas: canvas,
@@ -355,8 +465,10 @@ function App() {
   const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
-    // Update controls
-    controls.update()
+    // // Update controls
+    // if (gameData.status !== 2) {
+
+    // }
 
     airPlane.propeller.rotation.x += 0.3
     sea.mesh.rotation.z += 0.005
@@ -373,21 +485,7 @@ function App() {
 
   tick()
 
-  window.addEventListener('resize', () => {
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  })
-
-  document.addEventListener('mousemove', handleMouseMove, false)
+  eventObj.call(self)
 }
 
 export default App
