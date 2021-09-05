@@ -1,3 +1,4 @@
+import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
@@ -188,6 +189,70 @@ const createAirPlane = function () {
   self.scene.add(airPlane.mesh)
 }
 
+let prevMouseX = 0
+
+let mousePos = {
+  x: 0.0,
+  y: 0.0,
+}
+const handleMouseMove = function (evt) {
+  const tx = -1 + (evt.clientX / window.innerWidth) * 2
+  const ty = 1 - (evt.clientY / window.innerHeight) * 2
+
+  mousePos = {
+    x: tx,
+    y: ty,
+  }
+}
+
+const normalize = function (v, vmin, vmax, tmin, tmax) {
+  const nv = Math.max(Math.min(v, vmax), vmin)
+  const dv = vmax - vmin
+  const pc = (nv - vmin) / dv
+  const dt = tmax - tmin
+  const tv = tmin + pc * dt
+  return tv
+}
+
+const updatePlane = function () {
+  const targetZ = normalize(mousePos.x, -1, 1, -100, 100)
+  let targetY = normalize(mousePos.y, -1, 1, -50, 150)
+
+  if (targetY > 100) {
+    targetY = 100
+  }
+
+  if (targetY < 10) {
+    targetY = 10
+  }
+
+  airPlane.mesh.position.y = targetY
+  airPlane.mesh.position.z = targetZ
+  airPlane.propeller.rotation.x += 0.3
+
+  if (prevMouseX > mousePos.x) {
+    gsap.timeline().to(airPlane.mesh.rotation, {
+      x: -0.5,
+      duration: 0.5,
+      ease: 'none',
+    })
+  } else if (prevMouseX < mousePos.x) {
+    gsap.timeline().to(airPlane.mesh.rotation, {
+      x: 0.5,
+      duration: 0.5,
+      ease: 'none',
+    })
+  } else {
+    gsap.timeline().to(airPlane.mesh.rotation, {
+      x: 0,
+      duration: 0.5,
+      ease: 'none',
+    })
+  }
+
+  prevMouseX = mousePos.x
+}
+
 function App() {
   const self = this
   console.log('The construct of App.')
@@ -297,6 +362,8 @@ function App() {
     sea.mesh.rotation.z += 0.005
     sky.mesh.rotation.z += 0.001
 
+    updatePlane()
+
     // Render
     renderer.render(self.scene, camera)
 
@@ -319,6 +386,8 @@ function App() {
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   })
+
+  document.addEventListener('mousemove', handleMouseMove, false)
 }
 
 export default App
