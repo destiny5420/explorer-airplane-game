@@ -1,8 +1,9 @@
+/* eslint-disable no-use-before-define */
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
-import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
+import { CODE_E, CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
 import { type } from 'jquery'
 
 const Colors = {
@@ -52,8 +53,21 @@ const objData = {
 }
 
 const gameData = {
-  status: 0, // 0: idle / 1: playing / 2: game over
+  status: 0, // 0: waiting replay / 1: playing / 2: game over
   planeDefaultHeight: 100,
+  planeAmpHeight: 80,
+  planeAmpWidth: 75,
+  distance: 0,
+  distanceForSpeedUpdate: 100,
+  incrementSpeedByTime: 0.0000025,
+  speed: 0,
+  baseSpeed: 0,
+  speedLastUpdate: 0,
+  targetBaseSpeed: 0.00035,
+  ratioSpeedDistance: 50,
+
+  distanceForCoinsSpawn: 100,
+  coinLastSpawn: 0,
 }
 
 const environmentData = {
@@ -68,11 +82,15 @@ const sizes = {
   height: window.innerHeight,
 }
 
+let oldTime = 0
+let deltaTime = 0
+let newTime = 0
 let camera = null
 let renderer = null
 let sea = null
 let sky = null
 let airPlane = null
+let coinManager = null
 let ambientLight = null
 
 const Sea = function () {
@@ -269,6 +287,13 @@ const createAirPlane = function () {
   self.scene.add(airPlane.mesh)
 }
 
+const createCoins = function () {
+  const self = this
+
+  coinManager = new CoinManager(20)
+  self.scene.add(coinManager.mesh)
+}
+
 const CoinManager = function (count) {
   this.mesh = new THREE.Object3D()
 
@@ -281,7 +306,30 @@ const CoinManager = function (count) {
 }
 
 CoinManager.prototype.spawnCoins = function () {
+  console.warn(`spawnCoins`)
   const coinCount = 1 + Math.floor(Math.random() * 10)
+  const d =
+    environmentData.sea.radius +
+    gameData.planeDefaultHeight +
+    (-1 + Math.random() * 2) * (gameData.planeAmpHeight - 20)
+
+  const amplitude = 10 + Math.round(Math.random() * 10)
+
+  for (let i = 0; i < coinCount; i += 1) {
+    let coin
+    if (this.coinsPool.length) {
+      coin = this.coinsPool.pop()
+    } else {
+      coin = new Coin()
+    }
+
+    this.mesh.add(coin.mesh)
+    this.coinsInUse.push(coin)
+    coin.angle = -(i * 0.02)
+    coin.dist = d + Math.cos(i * 0.5) * amplitude
+    coin.mesh.position.y = -environmentData.sea.radius + Math.sin(coin.angle) * coin.dist
+    coin.mesh.position.x = Math.cos(coin.angle) * coin.dist
+  }
 }
 
 let prevMouseX = 0
@@ -353,10 +401,6 @@ const airplaneMoveToResult = function () {
 }
 
 const updatePlane = function () {
-  if (gameData.status === 2) {
-    return
-  }
-
   const targetY = normalize(mousePos.y, -0.5, 0.5, objData.airPlane.minY, objData.airPlane.maxY)
   const targetZ = normalize(mousePos.x, -0.75, 0.75, objData.airPlane.minZ, objData.airPlane.maxZ)
 
@@ -394,6 +438,14 @@ const updatePlane = function () {
   prevMouseX = mousePos.x
 }
 
+const updateDistance = function () {
+  gameData.distance += gameData.speed * deltaTime * gameData.ratioSpeedDistance
+  // console.log(gameData.speed, deltaTime, gameData.ratioSpeedDistance)
+  // 1. update ui bar
+
+  // 2. update level bar
+}
+
 const eventObj = function () {
   const self = this
 
@@ -420,6 +472,9 @@ const eventObj = function () {
         break
       case CODE_A:
         ambientLight.intensity = 2
+        break
+      case CODE_E:
+        gameData.status = 1
         break
       default:
         break
@@ -472,6 +527,7 @@ function App() {
   createSea.call(self)
   createSky.call(self)
   createAirPlane.call(self)
+  createCoins.call(self)
 
   /**
    * Camera
@@ -506,10 +562,6 @@ function App() {
    */
   const clock = new THREE.Clock()
 
-  let oldTime
-  let deltaTime
-  let newTime
-
   const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
@@ -521,11 +573,43 @@ function App() {
 
     // }
 
+    if (gameData.status === 0) {
+      console.log(`gameData.status: waiting replay`)
+    } else if (gameData.status === 1) {
+      console.log(`gameData.distance: `, gameData.distance)
+
+      // update coin distance
+      if (
+        Math.floor(gameData.distance) % gameData.distanceForCoinsSpawn === 0 &&
+        Math.floor(gameData.distance) > gameData.coinLastSpawn
+      ) {
+        gameData.coinLastSpawn = Math.floor(gameData.distance)
+        coinManager.spawnCoins()
+      }
+
+      // update speed
+      if (
+        Math.floor(gameData.distance) % gameData.distanceForSpeedUpdate === 0 &&
+        Math.floor(gameData.distance) > gameData.speedLastUpdate
+      ) {
+        gameData.speedLastUpdate = Math.floor(gameData.distance)
+        gameData.targetBaseSpeed += gameData.incrementSpeedByTime * deltaTime
+      }
+
+      updatePlane()
+      updateDistance()
+      gameData.baseSpeed += (gameData.targetBaseSpeed - gameData.baseSpeed) * deltaTime * 0.02
+
+      // console.log(gameData.targetBaseSpeed, gameData.baseSpeed)
+
+      gameData.speed = gameData.baseSpeed * 1.4
+    } else if (gameData.status === 2) {
+      console.log(`gameData.status: game over`)
+    }
+
     airPlane.propeller.rotation.x += 0.3
     sea.mesh.rotation.z += 0.005
     sky.mesh.rotation.z += 0.001
-
-    updatePlane()
 
     if (ambientLight.intensity < 0.005) {
       ambientLight.intensity = 0
