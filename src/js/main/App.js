@@ -480,9 +480,19 @@ const normalize = function (v, vmin, vmax, tmin, tmax) {
   return tv
 }
 
+const airplaneMoveToResult = function () {
+  gsap.timeline().to(airPlane.mesh.position, {
+    x: game.planeResultPos.x,
+    y: game.planeResultPos.y,
+    z: game.planeResultPos.z,
+  })
+}
+
 const cameraMoveToResult = function () {
   gsap
-    .timeline()
+    .timeline({
+      onComplete: showLeaderboard,
+    })
     .fromTo(
       camera.position,
       {
@@ -516,14 +526,6 @@ const cameraMoveToResult = function () {
     )
 }
 
-const airplaneMoveToResult = function () {
-  gsap.timeline().to(airPlane.mesh.position, {
-    x: game.planeResultPos.x,
-    y: game.planeResultPos.y,
-    z: game.planeResultPos.z,
-  })
-}
-
 const cameraMoveToPlaying = function () {
   gsap
     .timeline()
@@ -547,7 +549,60 @@ const cameraMoveToPlaying = function () {
     )
 }
 
-function showLeaderboard() {}
+function resetLeaderboard() {
+  $('.award-list').each(function (index, el) {
+    $(el).find('.rank').text('')
+    $(el).find('.name').text('')
+    $(el).find('.score').text('')
+  })
+
+  const user = $('.user-list')
+  $(user).find('.rank').text('')
+  $(user).find('.name').text('')
+  $(user).find('.score').text('')
+
+  $('.leaderboard').removeClass('active')
+}
+
+function showLeaderboard() {
+  const leaderBoardData = {
+    topUsers: [
+      {
+        rank: 1,
+        name: 'paper',
+        score: 20000,
+      },
+      {
+        rank: 2,
+        name: 'chh',
+        score: 15000,
+      },
+      {
+        rank: 3,
+        name: 'fire',
+        score: 10000,
+      },
+    ],
+    playerData: {
+      rank: 150,
+      name: 'custom',
+      score: 10000,
+    },
+  }
+
+  $('.award-list').each(function (index, el) {
+    $(el).find('.rank').text(leaderBoardData.topUsers[index].rank)
+    $(el).find('.name').text(leaderBoardData.topUsers[index].name)
+    $(el).find('.score').text(leaderBoardData.topUsers[index].score)
+  })
+
+  const user = $('.user-list')
+  $(user).find('.rank').text(leaderBoardData.playerData.rank)
+  $(user).find('.name').text(leaderBoardData.playerData.name)
+  $(user).find('.score').text(leaderBoardData.playerData.score)
+
+  $('.leaderboard').addClass('active')
+}
 
 function updatePlane() {
   game.planeSpeed = normalize(mousePos.x, -0.5, 0.5, game.planeMinSpeed, game.planeMaxSpeed)
@@ -604,7 +659,7 @@ function updateDistance() {
 }
 
 function setScore(value) {
-  $('.score').text(Math.floor(value))
+  $('.ui-score').text(Math.floor(value))
 }
 
 function setEnergyBar(value) {
@@ -651,11 +706,9 @@ function onMouseMoveEvent(evt) {
 
 function onKeyupEvent(evt) {
   switch (evt.code) {
-    // case CODE_ENTER:
-    //   game.status = 'gameover'
-    //   cameraMoveToResult()
-    //   airplaneMoveToResult()
-    //   break
+    case CODE_ENTER:
+      // showLeaderboard()
+      break
     case CODE_A:
       ambientLight.intensity = 2
       break
@@ -759,6 +812,8 @@ function resetGame() {
     spawnRandomMinZ: 0,
     spawnRandomMaxZ: 200,
   }
+
+  resetLeaderboard()
 }
 
 function createScene() {
@@ -990,10 +1045,38 @@ function init() {
   createEnemys()
 
   document.addEventListener('mousemove', onMouseMoveEvent, false)
+  document.addEventListener('touchmove', onTouchMoveEvent, false)
+  document.addEventListener('mouseup', onMouseUpEvent, false)
+  document.addEventListener('touchend', onTouchEndEvent, false)
   document.addEventListener('keyup', onKeyupEvent, false)
-  $('.message').on('click', onPlayMessageClick)
 
   update()
+}
+
+function onMouseUpEvent() {
+  onGameStart()
+}
+
+function onTouchEndEvent() {
+  onGameStart()
+}
+
+function onGameStart() {
+  if (game.status === 'waitingReplay' || game.status === 'start') {
+    resetGame()
+    game.status = 'playing'
+    $('.message').addClass('active')
+    $('.energy-bar').addClass('active')
+
+    cameraMoveToPlaying()
+  }
+}
+
+function onTouchMoveEvent(event) {
+  event.preventDefault()
+  const tx = -1 + (event.touches[0].pageX / window.innerWidth) * 2
+  const ty = 1 - (event.touches[0].pageY / window.innerHeight) * 2
+  mousePos = { x: tx, y: ty }
 }
 
 function App() {
