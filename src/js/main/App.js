@@ -547,6 +547,8 @@ const cameraMoveToPlaying = function () {
     )
 }
 
+function showLeaderboard() {}
+
 function updatePlane() {
   game.planeSpeed = normalize(mousePos.x, -0.5, 0.5, game.planeMinSpeed, game.planeMaxSpeed)
 

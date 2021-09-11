@@ -1,4 +1,4 @@
-.score {
+.ui-score {
   @include independent(10);
 
   top: 25px;
@@ -77,6 +77,76 @@
 
     50% {
       opacity: 0;
+    }
+  }
+}
+
+.leaderboard {
+  @include independent(10);
+  @include size(40%, auto);
+
+  top: 50%;
+  left: 10%;
+  transform: translate(0%, -50%);
+
+  .wrap {
+    @include flex-center(column);
+
+    width: 100%;
+    max-width: 600px;
+    justify-content: flex-start;
+    padding: 20px;
+    padding-top: 50px;
+    background-color: rgba($color: #e7e5e4, $alpha: 0.5);
+    border-radius: 15px;
+  }
+
+  .title {
+    @include independent();
+
+    top: 0%;
+    left: 50%;
+    padding: 15px 50px;
+    font-size: 32px;
+    background-color: #737373;
+    border: 5px solid #404040;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+  }
+
+  .list-wrap {
+    @include flex-center(column);
+    @include size(100%, 100%);
+
+    justify-content: flex-start;
+  }
+
+  .list {
+    @include flex-center();
+    @include size(100%, 12.5%);
+
+    position: relative;
+    justify-content: space-between;
+    padding: 15px 20px;
+    margin: 1% 0;
+    font-size: 24px;
+    background-color: #fff;
+    border-radius: 10px;
+
+    .award {
+      width: 15%;
+    }
+
+    .rank {
+      width: 20%;
+    }
+
+    .name {
+      width: 30%;
+    }
+
+    .score {
+      width: 35%;
     }
   }
 }
