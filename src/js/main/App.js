@@ -194,6 +194,13 @@ function addEnergy() {
   console.log(`AddEnergy / energy: ${game.energy}`)
 }
 
+function removeEnergy() {
+  game.energy -= game.ennemyValue
+  game.energy = Math.max(0, game.energy)
+
+  console.error(`removeEnergy / energy: ${game.energy}`)
+}
+
 const Coin = function () {
   const geom = new THREE.TetrahedronBufferGeometry(5, 0)
   const mat = new THREE.MeshPhongMaterial({
