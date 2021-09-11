@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { Maths } from '@/utils/formula'
@@ -136,8 +137,6 @@ const defaultSetting = {
   spawnBaseZ: 0,
   spawnRandomMinZ: 0,
   spawnRandomMaxZ: 200,
-
-  status: 'playing',
 }
 
 function isGameOver() {
@@ -525,6 +524,29 @@ const airplaneMoveToResult = function () {
   })
 }
 
+const cameraMoveToPlaying = function () {
+  gsap
+    .timeline()
+    .to(camera.position, {
+      x: game.cameraPlayingGamePos.x,
+      y: game.cameraPlayingGamePos.y,
+      z: game.cameraPlayingGamePos.z,
+      duration: game.cameraGameToResultDuration,
+      ease: 'none',
+    })
+    .to(
+      camera.rotation,
+      {
+        x: game.cameraPlayingGameRot.x,
+        y: game.cameraPlayingGameRot.y,
+        z: game.cameraPlayingGameRot.z,
+        duration: game.cameraGameToResultDuration,
+        ease: 'none',
+      },
+      `-=${game.cameraGameToResultDuration}`,
+    )
+}
+
 function updatePlane() {
   game.planeSpeed = normalize(mousePos.x, -0.5, 0.5, game.planeMinSpeed, game.planeMaxSpeed)
 
@@ -576,7 +598,11 @@ function updatePlane() {
 
 function updateDistance() {
   game.distance += game.speed * deltaTime * game.ratioSpeedDistance
-  $('.score').text(Math.floor(game.distance))
+  setScore(game.distance)
+}
+
+function setScore(value) {
+  $('.score').text(Math.floor(value))
 }
 
 function setEnergyBar(value) {
@@ -593,11 +619,7 @@ function updateEnergy() {
   setEnergyBar(game.energy)
 
   if (game.energy < 1) {
-    setEnergyBar(0)
-    game.status = 'gameover'
-
-    cameraMoveToResult()
-    airplaneMoveToResult()
+    onGameOver()
   }
 }
 
@@ -627,11 +649,11 @@ function onMouseMoveEvent(evt) {
 
 function onKeyupEvent(evt) {
   switch (evt.code) {
-    case CODE_ENTER:
-      game.status = 'gameover'
-      cameraMoveToResult()
-      airplaneMoveToResult()
-      break
+    // case CODE_ENTER:
+    //   game.status = 'gameover'
+    //   cameraMoveToResult()
+    //   airplaneMoveToResult()
+    //   break
     case CODE_A:
       ambientLight.intensity = 2
       break
@@ -641,8 +663,100 @@ function onKeyupEvent(evt) {
 }
 
 function resetGame() {
-  console.log(`Reset Game`)
-  game = defaultSetting
+  game = {
+    speed: 0,
+    initSpeed: 0.00035,
+    baseSpeed: 0.00035,
+    targetBaseSpeed: 0.00035,
+    incrementSpeedByTime: 0.0000025,
+    incrementSpeedByLevel: 0.000005,
+    distanceForSpeedUpdate: 100,
+    speedLastUpdate: 0,
+
+    distance: 0,
+    ratioSpeedDistance: 50,
+    energy: 100,
+    maxEnergy: 100,
+    ratioSpeedEnergy: 3,
+
+    level: 3,
+    levelLastUpdate: 0,
+    distanceForLevelUpdate: 1000,
+
+    planeDefaultHeight: 100,
+    planeAmpHeight: 80,
+    planeAmpWidth: 75,
+    planeMoveSensivity: 0.005,
+    planeRotXSensivity: 0.0008,
+    planeRotZSensivity: 0.0004,
+    planeFallSpeed: 0.001,
+    planeMinSpeed: 1.2,
+    planeMaxSpeed: 1.6,
+    planeMaxY: 180,
+    planeMinY: 10,
+    planeMaxZ: 250,
+    planeMinZ: -120,
+    planeResultPos: {
+      x: 0,
+      y: 90,
+      z: 3,
+    },
+    planeSpeed: 0,
+    planeCollisionDisplacementZ: 0,
+    planeCollisionSpeedZ: 0,
+
+    planeCollisionDisplacementY: 0,
+    planeCollisionSpeedY: 0,
+
+    seaRadius: 600,
+    seaLength: 800,
+
+    wavesMinAmp: 5,
+    wavesMaxAmp: 20,
+    wavesMinSpeed: 0.001,
+    wavesMaxSpeed: 0.003,
+
+    cameraFarPos: 500,
+    cameraNearPos: 150,
+    cameraSensivity: 0.002,
+    cameraGameToResultDuration: 1,
+    cameraPlayingGamePos: {
+      x: -235.104,
+      y: 205.22,
+      z: 118.99,
+    },
+    cameraPlayingGameRot: {
+      x: -1.143,
+      y: -1.048,
+      z: -1.086,
+    },
+    cameraResultPos: {
+      x: 83.521,
+      y: 118.229,
+      z: 70.522,
+    },
+    cameraResultRot: {
+      x: -1.132,
+      y: 1.054,
+      z: 1.075,
+    },
+
+    coinDistanceTolerance: 15,
+    coinValue: 3,
+    coinsSpeed: 0.5,
+    coinLastSpawn: 0,
+    distanceForCoinsSpawn: 100,
+
+    enemyDistanceTolerance: 20,
+    enemyValue: 10,
+    enemySpeed: 0.6,
+    enemyLastSpawn: 0,
+    distanceForEnemySpawn: 50,
+
+    spawnBaseZ: 0,
+    spawnRandomMinZ: 0,
+    spawnRandomMaxZ: 200,
+  }
 }
 
 function createScene() {
@@ -736,6 +850,8 @@ function createEnemys() {
   scene.add(enemyManager.mesh)
 }
 
+function onStart() {}
+
 function onPlaying() {
   // Spawn coin
   if (
@@ -767,6 +883,17 @@ function onPlaying() {
     game.targetBaseSpeed += game.incrementSpeedByTime * deltaTime
   }
 
+  if (
+    Math.floor(game.distance) % game.distanceForLevelUpdate === 0 &&
+    Math.floor(game.distance) > game.levelLastUpdate
+  ) {
+    game.levelLastUpdate = Math.floor(game.distance)
+    game.level += 1
+    console.error(game.level)
+
+    game.targetBaseSpeed += (game.incrementSpeedByLevel * game.level) / 10
+  }
+
   updatePlane()
   updateDistance()
   updateEnergy()
@@ -778,23 +905,40 @@ function onPlaying() {
 }
 
 function onGameOver() {
-  console.log(`Game Over`)
+  console.log(`onGameOver`)
+  setEnergyBar(0)
+  cameraMoveToResult()
+  airplaneMoveToResult()
+  $('.message').removeClass('active')
+  $('.energy-bar').removeClass('active')
+
   game.speed *= 0.99
   game.status = 'waitingReplay'
 }
 
-function onWaitingReplay() {}
+function onGameOverUpdate() {
+  console.log(`onGameOverUpdate`)
+  game.speed *= 0.99
+  game.status = 'waitingReplay'
+}
+
+function onWaitingReplay() {
+  // console.log(`onWaitingReplay`)
+}
 function update() {
   newTime = new Date().getTime()
   deltaTime = newTime - oldTime
   oldTime = newTime
 
   switch (game.status) {
+    case 'start':
+      onStart()
+      break
     case 'playing':
       onPlaying()
       break
     case 'gameover':
-      onGameOver()
+      onGameOverUpdate()
       break
     case 'waitingReplay':
       onWaitingReplay()
@@ -820,10 +964,20 @@ function update() {
   requestAnimationFrame(update)
 }
 
+function onPlayMessageClick(e) {
+  resetGame()
+  game.status = 'playing'
+  $('.message').addClass('active')
+  $('.energy-bar').addClass('active')
+
+  cameraMoveToPlaying()
+}
+
 function init() {
   console.log(`Init`)
 
   resetGame()
+  game.status = 'start'
 
   createScene()
   createLights()
@@ -835,6 +989,7 @@ function init() {
 
   document.addEventListener('mousemove', onMouseMoveEvent, false)
   document.addEventListener('keyup', onKeyupEvent, false)
+  $('.message').on('click', onPlayMessageClick)
 
   update()
 }

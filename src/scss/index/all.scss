@@ -8,16 +8,29 @@
 
 .energy-bar {
   @include independent(10);
-  @include size(250px, 50px);
 
   bottom: 5%;
   left: 50%;
-  padding: 8px;
-  background-color: #fafafa;
-  border-radius: 15px;
   transform: translate(-50%, 0%);
 
+  &.active {
+    .wrap {
+      transform: translateY(0);
+    }
+  }
+
   .wrap {
+    @include size(250px, 50px);
+
+    padding: 8px;
+    background-color: #fafafa;
+    border-radius: 15px;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
+    transition: 0.5s ease-out;
+    transform: translateY(200px);
+  }
+
+  .inner {
     @include size(100%);
 
     overflow: hidden;
@@ -31,5 +44,39 @@
 
     background-color: #6ee7b7;
     transform: translateX(0);
+  }
+}
+
+.message {
+  @include independent(10);
+
+  bottom: 15%;
+  left: 50%;
+  font-size: 24px;
+  color: #374151;
+  opacity: 1;
+  transition: 0.25s ease;
+  cursor: pointer;
+  transform: translate(-50%, 0%);
+  pointer-events: all;
+
+  &.active {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .text {
+    animation: flash-anim 1.5s 0s infinite both linear;
+  }
+
+  @keyframes flash-anim {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0;
+    }
   }
 }
