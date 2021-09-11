@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
+import { Maths } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
 import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
@@ -35,9 +36,107 @@ let hemisphereLight = null
 let ambientLight = null
 let shadowLight = null
 let coinManager = null
+let enemyManager = null
 let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
 let deltaTime = 0
+let enemyPool = []
+
+const defaultSetting = {
+  speed: 0,
+  initSpeed: 0.00035,
+  baseSpeed: 0.00035,
+  targetBaseSpeed: 0.00035,
+  incrementSpeedByTime: 0.0000025,
+  incrementSpeedByLevel: 0.000005,
+  distanceForSpeedUpdate: 100,
+  speedLastUpdate: 0,
+
+  distance: 0,
+  ratioSpeedDistance: 50,
+  energy: 100,
+  ratioSpeedEnergy: 3,
+
+  level: 3,
+  levelLastUpdate: 0,
+  distanceForLevelUpdate: 1000,
+
+  planeDefaultHeight: 100,
+  planeAmpHeight: 80,
+  planeAmpWidth: 75,
+  planeMoveSensivity: 0.005,
+  planeRotXSensivity: 0.0008,
+  planeRotZSensivity: 0.0004,
+  planeFallSpeed: 0.001,
+  planeMinSpeed: 1.2,
+  planeMaxSpeed: 1.6,
+  planeMaxY: 150,
+  planeMinY: 10,
+  planeMaxZ: 250,
+  planeMinZ: -120,
+  PlaneResultPos: {
+    x: 0,
+    y: 90,
+    z: 3,
+  },
+  planeSpeed: 0,
+  planeCollisionDisplacementZ: 0,
+  planeCollisionSpeedZ: 0,
+
+  planeCollisionDisplacementY: 0,
+  planeCollisionSpeedY: 0,
+
+  seaRadius: 600,
+  seaLength: 800,
+
+  wavesMinAmp: 5,
+  wavesMaxAmp: 20,
+  wavesMinSpeed: 0.001,
+  wavesMaxSpeed: 0.003,
+
+  cameraFarPos: 500,
+  cameraNearPos: 150,
+  cameraSensivity: 0.002,
+  cameraGameToResultDuration: 1,
+  cameraPlayingGamePos: {
+    x: -235.104,
+    y: 205.22,
+    z: 118.99,
+  },
+  cameraPlayingGameRot: {
+    x: -1.143,
+    y: -1.048,
+    z: -1.086,
+  },
+  cameraResultPos: {
+    x: 83.521,
+    y: 118.229,
+    z: 70.522,
+  },
+  cameraResultRot: {
+    x: -1.132,
+    y: 1.054,
+    z: 1.075,
+  },
+
+  coinDistanceTolerance: 15,
+  coinValue: 3,
+  coinsSpeed: 0.5,
+  coinLastSpawn: 0,
+  distanceForCoinsSpawn: 100,
+
+  enemyDistanceTolerance: 20,
+  enemyValue: 10,
+  enemySpeed: 0.6,
+  enemyLastSpawn: 0,
+  distanceForEnemySpawn: 50,
+
+  spawnBaseZ: 0,
+  spawnRandomMinZ: 0,
+  spawnRandomMaxZ: 200,
+
+  status: 'playing',
+}
 
 const Sea = function () {
   const geom = new THREE.CylinderGeometry(game.seaRadius, game.seaRadius, game.seaLength, 40, 10)
@@ -195,10 +294,96 @@ function addEnergy() {
 }
 
 function removeEnergy() {
-  game.energy -= game.ennemyValue
+  game.energy -= game.enemyValue
   game.energy = Math.max(0, game.energy)
 
   console.error(`removeEnergy / energy: ${game.energy}`)
+}
+
+const Enemy = function () {
+  const geom = new THREE.TetrahedronGeometry(8, 2)
+  const mat = new THREE.MeshPhongMaterial({
+    color: Colors.red,
+    shininess: 0,
+    specular: 0xffffff,
+    flatShading: THREE.FlatShading,
+  })
+  this.mesh = new THREE.Mesh(geom, mat)
+  this.mesh.castShadow = true
+  this.angle = 0
+  this.dist = 0
+}
+
+const EnemyManager = function () {
+  this.mesh = new THREE.Object3D()
+  this.enemiesInUse = []
+}
+
+EnemyManager.prototype.spawnEnemy = function () {
+  const enemyCount = game.level
+
+  for (let i = 0; i < enemyCount; i += 1) {
+    let enemy
+    if (enemyPool.length) {
+      enemy = enemyPool.pop()
+    } else {
+      enemy = new Enemy()
+    }
+
+    enemy.angle = -(i * 0.1)
+    enemy.distance =
+      game.seaRadius +
+      game.planeDefaultHeight +
+      (-1 + Math.random() * 2) * (game.planeAmpHeight - 20)
+
+    enemy.mesh.position.y = -game.seaRadius + Math.sin(enemy.angle) * enemy.distance
+    enemy.mesh.position.x = Math.cos(enemy.angle) * enemy.distance
+
+    const extraZ = Math.random() * 50 * (Math.random() >= 0.5 ? -1 : 1)
+    enemy.mesh.position.z = game.spawnBaseZ + extraZ
+
+    this.mesh.add(enemy.mesh)
+    this.enemiesInUse.push(enemy)
+  }
+}
+
+EnemyManager.prototype.rotateEnemy = function () {
+  for (let i = 0; i < this.enemiesInUse.length; i += 1) {
+    const enemy = this.enemiesInUse[i]
+
+    enemy.angle += game.speed * deltaTime * game.enemySpeed
+    if (enemy.angle > Math.PI * 2) {
+      enemy.angle -= Math.PI * 2
+    }
+    enemy.mesh.position.y = -game.seaRadius + Math.sin(enemy.angle) * enemy.distance
+    enemy.mesh.position.x = Math.cos(enemy.angle) * enemy.distance
+    enemy.mesh.rotation.z += Math.random() * 0.1
+    enemy.mesh.rotation.y += Math.random() * 0.1
+
+    const diffPos = airPlane.mesh.position.clone().sub(enemy.mesh.position.clone())
+    const d = diffPos.length()
+
+    if (d < game.enemyDistanceTolerance) {
+      console.error('The coin collide with enemy!!!')
+      // 1. play particle
+
+      // 2. plane collider event
+      game.planeCollisionSpeedY = (100 * diffPos.y) / d
+      game.planeCollisionSpeedZ = (100 * diffPos.z) / d
+
+      ambientLight.intensity = 2
+      removeEnergy()
+
+      enemyPool.unshift(this.enemiesInUse.splice(i, 1)[0])
+      this.mesh.remove(enemy.mesh)
+
+      i -= 1
+    } else if (enemy.angle > Math.PI) {
+      enemyPool.unshift(this.enemiesInUse.splice(i, 1)[0])
+      this.mesh.remove(enemy.mesh)
+      i -= 1
+    }
+  }
 }
 
 const Coin = function () {
@@ -226,13 +411,13 @@ const CoinManager = function (count) {
 }
 
 CoinManager.prototype.spawnCoins = function () {
-  const coinCount = 1 + Math.floor(Math.random() * 10)
+  const coinCount = 5 + Math.floor(Math.random() * 10)
 
   const distance =
     game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight - 20)
 
   const amplitude = 10 + Math.round(Math.random() * 10)
-  const baseZ = Math.random() * 200
+  game.spawnBaseZ = Math.random() * game.spawnRandomMaxZ
 
   for (let i = 0; i < coinCount; i += 1) {
     let coin = null
@@ -249,7 +434,7 @@ CoinManager.prototype.spawnCoins = function () {
     coin.dist = distance + Math.cos(i * 0.5) * amplitude
     coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle) * coin.dist
     coin.mesh.position.x = Math.cos(coin.angle) * coin.dist
-    coin.mesh.position.z = baseZ + i * 5
+    coin.mesh.position.z = game.spawnBaseZ + i * 5
   }
 }
 
@@ -336,19 +521,29 @@ const airplaneMoveToResult = function () {
 
 function updatePlane() {
   game.planeSpeed = normalize(mousePos.x, -0.5, 0.5, game.planeMinSpeed, game.planeMaxSpeed)
-  const targetY = normalize(mousePos.y, -0.5, 0.5, game.planeMinY, game.planeMaxY)
-  const targetZ = normalize(mousePos.x, -0.75, 0.75, game.planeMinZ, game.planeMaxZ)
 
-  airPlane.mesh.position.y += (targetY - airPlane.mesh.position.y) * 0.1
-  airPlane.mesh.position.z += (targetZ - airPlane.mesh.position.z) * 0.05
-  airPlane.mesh.rotation.z = (targetY - airPlane.mesh.position.y) * 0.0128
+  let targetY = normalize(mousePos.y, -0.5, 0.5, game.planeMinY, game.planeMaxY)
+  game.planeCollisionDisplacementY += game.planeCollisionSpeedY
+  targetY += game.planeCollisionDisplacementY
+
+  let targetZ = normalize(mousePos.x, -0.75, 0.75, game.planeMinZ, game.planeMaxZ)
+  game.planeCollisionDisplacementZ += game.planeCollisionSpeedZ
+  targetZ += game.planeCollisionDisplacementZ
+
+  airPlane.mesh.position.y +=
+    (targetY - airPlane.mesh.position.y) * deltaTime * game.planeMoveSensivity
+  airPlane.mesh.position.z +=
+    (targetZ - airPlane.mesh.position.z) * deltaTime * game.planeMoveSensivity
+
   airPlane.mesh.rotation.y = (airPlane.mesh.position.y - targetY) * 0.005
+  airPlane.mesh.rotation.z = (targetY - airPlane.mesh.position.y) * 0.0128
+
+  game.planeCollisionSpeedY += (0 - game.planeCollisionSpeedY) * deltaTime * 0.03
+  game.planeCollisionDisplacementY += (0 - game.planeCollisionDisplacementY) * deltaTime * 0.01
+  game.planeCollisionSpeedZ += (0 - game.planeCollisionSpeedZ) * deltaTime * 0.03
+  game.planeCollisionDisplacementZ += (0 - game.planeCollisionDisplacementZ) * deltaTime * 0.01
 
   airPlane.propeller.rotation.x += 0.3
-
-  // console.log(
-  //   `airPlane / x: ${airPlane.mesh.position.x} / y: ${airPlane.mesh.position.y} / z: ${airPlane.mesh.position.z}`,
-  // )
 
   if (prevMouseX > mousePos.x) {
     gsap.timeline().to(airPlane.mesh.rotation, {
@@ -426,97 +621,7 @@ function onKeyupEvent(evt) {
 
 function resetGame() {
   console.log(`Reset Game`)
-  game = {
-    speed: 0,
-    initSpeed: 0.00035,
-    baseSpeed: 0.00035,
-    targetBaseSpeed: 0.00035,
-    incrementSpeedByTime: 0.0000025,
-    incrementSpeedByLevel: 0.000005,
-    distanceForSpeedUpdate: 100,
-    speedLastUpdate: 0,
-
-    distance: 0,
-    ratioSpeedDistance: 50,
-    energy: 100,
-    ratioSpeedEnergy: 3,
-
-    level: 1,
-    levelLastUpdate: 0,
-    distanceForLevelUpdate: 1000,
-
-    planeDefaultHeight: 100,
-    planeAmpHeight: 80,
-    planeAmpWidth: 75,
-    planeMoveSensivity: 0.005,
-    planeRotXSensivity: 0.0008,
-    planeRotZSensivity: 0.0004,
-    planeFallSpeed: 0.001,
-    planeMinSpeed: 1.2,
-    planeMaxSpeed: 1.6,
-    planeMaxY: 150,
-    planeMinY: 10,
-    planeMaxZ: 250,
-    planeMinZ: -120,
-    PlaneResultPos: {
-      x: 0,
-      y: 90,
-      z: 3,
-    },
-    planeSpeed: 0,
-    planeCollisionDisplacementX: 0,
-    planeCollisionSpeedX: 0,
-
-    planeCollisionDisplacementY: 0,
-    planeCollisionSpeedY: 0,
-
-    seaRadius: 600,
-    seaLength: 800,
-
-    wavesMinAmp: 5,
-    wavesMaxAmp: 20,
-    wavesMinSpeed: 0.001,
-    wavesMaxSpeed: 0.003,
-
-    cameraFarPos: 500,
-    cameraNearPos: 150,
-    cameraSensivity: 0.002,
-    cameraGameToResultDuration: 1,
-    cameraPlayingGamePos: {
-      x: -235.104,
-      y: 205.22,
-      z: 118.99,
-    },
-    cameraPlayingGameRot: {
-      x: -1.143,
-      y: -1.048,
-      z: -1.086,
-    },
-    cameraResultPos: {
-      x: 83.521,
-      y: 118.229,
-      z: 70.522,
-    },
-    cameraResultRot: {
-      x: -1.132,
-      y: 1.054,
-      z: 1.075,
-    },
-
-    coinDistanceTolerance: 15,
-    coinValue: 3,
-    coinsSpeed: 0.5,
-    coinLastSpawn: 0,
-    distanceForCoinsSpawn: 100,
-
-    ennemyDistanceTolerance: 10,
-    ennemyValue: 10,
-    ennemiesSpeed: 0.6,
-    ennemyLastSpawn: 0,
-    distanceForEnnemiesSpawn: 50,
-
-    status: 'playing',
-  }
+  game = defaultSetting
 }
 
 function createScene() {
@@ -600,7 +705,18 @@ function createCoins() {
   scene.add(coinManager.mesh)
 }
 
+function createEnemys() {
+  for (let i = 0; i < 10; i += 1) {
+    const enemy = new Enemy()
+    enemyPool.push(enemy)
+  }
+
+  enemyManager = new EnemyManager()
+  scene.add(enemyManager.mesh)
+}
+
 function onPlaying() {
+  // Spawn coin
   if (
     Math.floor(game.distance) % game.distanceForCoinsSpawn === 0 &&
     Math.floor(game.distance) > game.coinLastSpawn
@@ -610,6 +726,17 @@ function onPlaying() {
     coinManager.spawnCoins()
   }
 
+  // Spawn enemy
+  if (
+    Math.floor(game.distance) % game.distanceForEnemySpawn === 0 &&
+    Math.floor(game.distance) > game.enemyLastSpawn
+  ) {
+    console.warn(`spawn enemy`)
+    game.enemyLastSpawn = Math.floor(game.distance)
+    enemyManager.spawnEnemy()
+  }
+
+  // Update speed
   if (
     Math.floor(game.distance) % game.distanceForSpeedUpdate === 0 &&
     Math.floor(game.distance) > game.speedLastUpdate
@@ -625,6 +752,8 @@ function onPlaying() {
 
   game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02
   game.speed = game.baseSpeed * game.planeSpeed
+  game.speed = Math.min(game.speed, 0.0015)
+  // 0.0015
 }
 
 function onGameOver() {
@@ -664,6 +793,7 @@ function update() {
   }
 
   coinManager.rotateCoins()
+  enemyManager.rotateEnemy()
 
   renderer.render(scene, camera)
   requestAnimationFrame(update)
@@ -680,6 +810,7 @@ function init() {
   createSea()
   createSky()
   createCoins()
+  createEnemys()
 
   document.addEventListener('mousemove', onMouseMoveEvent, false)
   document.addEventListener('keyup', onKeyupEvent, false)
