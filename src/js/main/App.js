@@ -40,7 +40,7 @@ let enemyManager = null
 let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
 let deltaTime = 0
-let enemyPool = []
+const enemyPool = []
 
 const defaultSetting = {
   speed: 0,
@@ -74,7 +74,7 @@ const defaultSetting = {
   planeMinY: 10,
   planeMaxZ: 250,
   planeMinZ: -120,
-  PlaneResultPos: {
+  planeResultPos: {
     x: 0,
     y: 90,
     z: 3,
@@ -136,6 +136,10 @@ const defaultSetting = {
   spawnRandomMaxZ: 200,
 
   status: 'playing',
+}
+
+function isGameOver() {
+  return game.status === 'gameover'
 }
 
 const Sea = function () {
@@ -363,7 +367,7 @@ EnemyManager.prototype.rotateEnemy = function () {
     const diffPos = airPlane.mesh.position.clone().sub(enemy.mesh.position.clone())
     const d = diffPos.length()
 
-    if (d < game.enemyDistanceTolerance) {
+    if (d < game.enemyDistanceTolerance && !isGameOver()) {
       console.error('The coin collide with enemy!!!')
       // 1. play particle
 
@@ -452,7 +456,7 @@ CoinManager.prototype.rotateCoins = function () {
     const d = diffPos.length()
 
     // if the airplane collides with the coin
-    if (d < game.coinDistanceTolerance) {
+    if (d < game.coinDistanceTolerance && !isGameOver()) {
       console.log('The coin collide with airplane!!!')
       this.coinsPool.unshift(this.coinsInUse.splice(i, 1)[0])
       this.mesh.remove(coin.mesh)
@@ -578,6 +582,9 @@ function updateEnergy() {
 
   if (game.energy < 1) {
     game.status = 'gameover'
+
+    cameraMoveToResult()
+    airplaneMoveToResult()
   }
 }
 
@@ -608,6 +615,7 @@ function onMouseMoveEvent(evt) {
 function onKeyupEvent(evt) {
   switch (evt.code) {
     case CODE_ENTER:
+      game.status = 'gameover'
       cameraMoveToResult()
       airplaneMoveToResult()
       break
