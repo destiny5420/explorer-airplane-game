@@ -396,7 +396,10 @@ const airplaneMoveToResult = function () {
 const cameraMoveToResult = function () {
   gsap
     .timeline({
-      onComplete: showLeaderboard,
+      onComplete: function () {
+        showLeaderboard()
+        game.endAnimation = true
+      },
     })
     .fromTo(
       camera.position,
@@ -624,6 +627,7 @@ function onKeyupEvent(evt) {
 
 function resetGame() {
   game = {
+    endAnimation: false,
     speed: 0,
     initSpeed: 0.00035,
     baseSpeed: 0.00035,
@@ -926,20 +930,12 @@ function update() {
   requestAnimationFrame(update)
 }
 
-function onPlayMessageClick(e) {
-  resetGame()
-  game.status = 'playing'
-  $('.message').addClass('active')
-  $('.energy-bar').addClass('active')
-
-  cameraMoveToPlaying()
-}
-
 function init() {
   console.log(`Init`)
 
   resetGame()
   game.status = 'start'
+  game.endAnimation = true
 
   createScene()
   createLights()
@@ -968,6 +964,10 @@ function onTouchEndEvent() {
 
 function onGameStart() {
   if (game.status === 'waitingReplay' || game.status === 'start') {
+    if (!game.endAnimation) {
+      return
+    }
+
     resetGame()
     game.status = 'playing'
     $('.message').addClass('active')
