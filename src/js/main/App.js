@@ -606,7 +606,17 @@ function onPlaying() {
     Math.floor(game.distance) > game.coinLastSpawn
   ) {
     console.warn(`spawn coins`)
+    game.coinLastSpawn = Math.floor(game.distance)
     coinManager.spawnCoins()
+  }
+
+  if (
+    Math.floor(game.distance) % game.distanceForSpeedUpdate === 0 &&
+    Math.floor(game.distance) > game.speedLastUpdate
+  ) {
+    console.warn(`update game speed`)
+    game.speedLastUpdate = Math.floor(game.distance)
+    game.targetBaseSpeed += game.incrementSpeedByTime * deltaTime
   }
 
   updatePlane()
