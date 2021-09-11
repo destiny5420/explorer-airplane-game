@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { Maths } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
+import $ from 'jquery'
 import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
 
 const Colors = {
@@ -55,6 +56,7 @@ const defaultSetting = {
   distance: 0,
   ratioSpeedDistance: 50,
   energy: 100,
+  maxEnergy: 100,
   ratioSpeedEnergy: 3,
 
   level: 3,
@@ -70,7 +72,7 @@ const defaultSetting = {
   planeFallSpeed: 0.001,
   planeMinSpeed: 1.2,
   planeMaxSpeed: 1.6,
-  planeMaxY: 150,
+  planeMaxY: 180,
   planeMinY: 10,
   planeMaxZ: 250,
   planeMinZ: -120,
@@ -293,7 +295,7 @@ const AirPlane = function () {
 
 function addEnergy() {
   game.energy += game.coinValue
-  game.energy = Math.min(game.energy, 100)
+  game.energy = Math.min(game.energy, game.maxEnergy)
   console.log(`AddEnergy / energy: ${game.energy}`)
 }
 
@@ -574,13 +576,24 @@ function updatePlane() {
 
 function updateDistance() {
   game.distance += game.speed * deltaTime * game.ratioSpeedDistance
+  $('.score').text(Math.floor(game.distance))
+}
+
+function setEnergyBar(value) {
+  const percent = (value / game.maxEnergy) * 100
+  const result = Maths.remap(percent, 0, 100, -100, 0)
+
+  $('.energy-bar').find('.bar').css('transform', `translateX(${result}%)`)
 }
 
 function updateEnergy() {
   game.energy -= game.speed * deltaTime * game.ratioSpeedEnergy
   game.energy = Math.max(0, game.energy)
 
+  setEnergyBar(game.energy)
+
   if (game.energy < 1) {
+    setEnergyBar(0)
     game.status = 'gameover'
 
     cameraMoveToResult()
