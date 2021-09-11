@@ -1,9 +1,12 @@
 .ui-score {
   @include independent(10);
 
-  top: 25px;
+  top: 60px;
   left: 25px;
-  font-size: 36px;
+  font-size: 60px;
+  text-align: left;
+  color: rgba($color: #404040, $alpha: 0.5);
+  transform: translate(0, -50%) skew(0deg, -5deg);
 }
 
 .energy-bar {
@@ -34,7 +37,7 @@
     @include size(100%);
 
     overflow: hidden;
-    background-color: #e5e5e5;
+    background-color: #737373;
     border-radius: 8px;
     transform-style: preserve-3d;
   }

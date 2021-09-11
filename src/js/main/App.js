@@ -44,101 +44,6 @@ let oldTime = new Date().getTime()
 let deltaTime = 0
 const enemyPool = []
 
-const defaultSetting = {
-  speed: 0,
-  initSpeed: 0.00035,
-  baseSpeed: 0.00035,
-  targetBaseSpeed: 0.00035,
-  incrementSpeedByTime: 0.0000025,
-  incrementSpeedByLevel: 0.000005,
-  distanceForSpeedUpdate: 100,
-  speedLastUpdate: 0,
-
-  distance: 0,
-  ratioSpeedDistance: 50,
-  energy: 100,
-  maxEnergy: 100,
-  ratioSpeedEnergy: 3,
-
-  level: 3,
-  levelLastUpdate: 0,
-  distanceForLevelUpdate: 1000,
-
-  planeDefaultHeight: 100,
-  planeAmpHeight: 80,
-  planeAmpWidth: 75,
-  planeMoveSensivity: 0.005,
-  planeRotXSensivity: 0.0008,
-  planeRotZSensivity: 0.0004,
-  planeFallSpeed: 0.001,
-  planeMinSpeed: 1.2,
-  planeMaxSpeed: 1.6,
-  planeMaxY: 180,
-  planeMinY: 10,
-  planeMaxZ: 250,
-  planeMinZ: -120,
-  planeResultPos: {
-    x: 0,
-    y: 90,
-    z: 3,
-  },
-  planeSpeed: 0,
-  planeCollisionDisplacementZ: 0,
-  planeCollisionSpeedZ: 0,
-
-  planeCollisionDisplacementY: 0,
-  planeCollisionSpeedY: 0,
-
-  seaRadius: 600,
-  seaLength: 800,
-
-  wavesMinAmp: 5,
-  wavesMaxAmp: 20,
-  wavesMinSpeed: 0.001,
-  wavesMaxSpeed: 0.003,
-
-  cameraFarPos: 500,
-  cameraNearPos: 150,
-  cameraSensivity: 0.002,
-  cameraGameToResultDuration: 1,
-  cameraPlayingGamePos: {
-    x: -235.104,
-    y: 205.22,
-    z: 118.99,
-  },
-  cameraPlayingGameRot: {
-    x: -1.143,
-    y: -1.048,
-    z: -1.086,
-  },
-  cameraResultPos: {
-    x: 83.521,
-    y: 118.229,
-    z: 70.522,
-  },
-  cameraResultRot: {
-    x: -1.132,
-    y: 1.054,
-    z: 1.075,
-  },
-
-  coinDistanceTolerance: 15,
-  coinValue: 3,
-  coinsSpeed: 0.5,
-  coinLastSpawn: 0,
-  distanceForCoinsSpawn: 100,
-
-  enemyDistanceTolerance: 20,
-  enemyValue: 10,
-  enemySpeed: 0.6,
-  enemyLastSpawn: 0,
-  distanceForEnemySpawn: 50,
-
-  spawnBaseZ: 0,
-  spawnRandomMinZ: 0,
-  spawnRandomMaxZ: 200,
-}
-
 function isGameOver() {
   return game.status === 'gameover'
 }
@@ -723,8 +628,8 @@ function resetGame() {
     initSpeed: 0.00035,
     baseSpeed: 0.00035,
     targetBaseSpeed: 0.00035,
-    incrementSpeedByTime: 0.0000025,
-    incrementSpeedByLevel: 0.000005,
+    incrementSpeedByTime: 0.00000125,
+    incrementSpeedByLevel: 0.0000025,
     distanceForSpeedUpdate: 100,
     speedLastUpdate: 0,
 
@@ -957,7 +862,7 @@ function onPlaying() {
 
   game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02
   game.speed = game.baseSpeed * game.planeSpeed
-  game.speed = Math.min(game.speed, 0.0015)
+  game.speed = Math.min(game.speed, 0.00125)
   // 0.0015
 }
 
