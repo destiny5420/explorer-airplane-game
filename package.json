@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "animejs": "^3.2.1",
+    "axios": "^0.21.4",
     "cross-env": "^7.0.3",
     "dat.gui": "^0.7.7",
     "easytimer": "^1.1.1",

@@ -4,8 +4,10 @@ import * as THREE from 'three'
 import { Maths } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as dat from 'dat.gui'
-import $ from 'jquery'
+import $, { error } from 'jquery'
 import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
+import Configure from '@/utils/Configure'
+import axios from 'axios'
 
 const Colors = {
   red: 0xf25346,
@@ -43,6 +45,74 @@ let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
 let deltaTime = 0
 const enemyPool = []
+const leaderBoardData = {
+  topUsers: [],
+}
+const userRequest = axios.create({
+  baseURL: `${Configure.SERVER_API_BASE}/mongo`,
+  headers: { 'Content-Type': 'application/json' },
+})
+const userData = {
+  name: 'postman-raw-name',
+}
+
+// API
+async function registerUser() {
+  console.log(`registerUser starting...`)
+
+  await userRequest({
+    method: 'post',
+    url: 'register',
+    data: {
+      name: 'paper',
+    },
+  }).then(function (response) {
+    console.log(response)
+  })
+}
+async function updateLeaderBoard() {
+  resetLeaderBoardData()
+
+  await userRequest({
+    method: 'get',
+    url: '/find',
+  })
+    .then(function (response) {
+      if (response.data.success) {
+        leaderBoardData.topUsers = response.data.result
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+async function updateScore(score) {
+  await userRequest({
+    method: 'post',
+    url: '/update',
+    data: {
+      name: userData.name,
+      score,
+    },
+  })
+    .then(function (response) {
+      console.log(response.data)
+    })
+    .catch((err) => console.error(err))
+}
+
+async function showLeaderBoard() {
+  $('.award-list').each(function (index, el) {
+    $(el)
+      .find('.rank')
+      .text(index + 1)
+    $(el).find('.name').text(leaderBoardData.topUsers[index].name)
+    $(el).find('.score').text(leaderBoardData.topUsers[index].score)
+  })
+
+  $('.leaderboard').addClass('active')
+}
 
 function isGameOver() {
   return game.status === 'gameover'
@@ -393,13 +463,16 @@ const airplaneMoveToResult = function () {
   })
 }
 
+function onCameraMoveToResultCallback() {
+  updateScore(Math.floor(game.distance))
+  showLeaderBoard()
+  game.endAnimation = true
+}
+
 const cameraMoveToResult = function () {
   gsap
     .timeline({
-      onComplete: function () {
-        showLeaderboard()
-        game.endAnimation = true
-      },
+      onComplete: onCameraMoveToResultCallback,
     })
     .fromTo(
       camera.position,
@@ -472,44 +545,9 @@ function resetLeaderboard() {
   $('.leaderboard').removeClass('active')
 }
 
-function showLeaderboard() {
-  const leaderBoardData = {
-    topUsers: [
-      {
-        rank: 1,
-        name: 'paper',
-        score: 20000,
-      },
-      {
-        rank: 2,
-        name: 'chh',
-        score: 15000,
-      },
-      {
-        rank: 3,
-        name: 'fire',
-        score: 10000,
-      },
-    ],
-    playerData: {
-      rank: 150,
-      name: 'custom',
-      score: 10000,
-    },
-  }
-
-  $('.award-list').each(function (index, el) {
-    $(el).find('.rank').text(leaderBoardData.topUsers[index].rank)
-    $(el).find('.name').text(leaderBoardData.topUsers[index].name)
-    $(el).find('.score').text(leaderBoardData.topUsers[index].score)
-  })
-
-  const user = $('.user-list')
-  $(user).find('.rank').text(leaderBoardData.playerData.rank)
-  $(user).find('.name').text(leaderBoardData.playerData.name)
-  $(user).find('.score').text(leaderBoardData.playerData.score)
-
-  $('.leaderboard').addClass('active')
+function resetLeaderBoardData() {
+  leaderBoardData.topUsers = []
+  // leaderBoardData.player = {}
 }
 
 function updatePlane() {
@@ -615,7 +653,7 @@ function onMouseMoveEvent(evt) {
 function onKeyupEvent(evt) {
   switch (evt.code) {
     case CODE_ENTER:
-      // showLeaderboard()
+      updateScore(Math.floor(game.distance))
       break
     case CODE_A:
       ambientLight.intensity = 2
@@ -967,6 +1005,8 @@ function onGameStart() {
     if (!game.endAnimation) {
       return
     }
+
+    updateLeaderBoard()
 
     resetGame()
     game.status = 'playing'
