@@ -211,3 +211,54 @@
     transition: 0.25s ease;
   }
 }
+
+.login-panel {
+  @include independent(20);
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .wrap {
+    @include flex-center();
+
+    .input-login-name {
+      height: 50px;
+      padding: 26px 18px;
+      margin-right: 5px;
+      font-size: 30px;
+      border-color: transparent;
+      border-radius: 10px;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .btn-login {
+      padding: 10px 15px;
+      font-size: 20px;
+      background-color: #e5e5e5;
+      border-color: transparent;
+      border-radius: 10px;
+      transition: 0.25s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #a3a3a3;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

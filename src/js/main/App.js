@@ -2,7 +2,7 @@
 /* eslint-disable no-use-before-define */
 import gsap from 'gsap'
 import * as THREE from 'three'
-import { Maths } from '@/utils/formula'
+import { Maths, Event } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
@@ -47,6 +47,7 @@ let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
 let deltaTime = 0
 let coinMesh = null
+let loginDone = false
 const gltfLoader = new GLTFLoader()
 const enemyPool = []
 const leaderBoardData = {
@@ -60,15 +61,41 @@ const userData = {
   name: 'postman-raw-name',
 }
 
+function checkLogin() {
+  const userName = Event.getCookieByName('boat-game-username')
+
+  if (userName) {
+    console.warn(`Already login! userName: ${userName}`)
+    registerUser(userName)
+    userData.name = userName
+    loginDone = true
+  } else {
+    console.warn('show login panel')
+    $('.login-panel').addClass('active')
+
+    $('#btn-login').on('click', function () {
+      if ($('#input-login-name').val()) {
+        $('.login-panel').removeClass('active')
+        $('#input-login-name').prop('disabled', true)
+        const loginName = $('#input-login-name').val()
+        Event.setCookie('boat-game-username', loginName)
+        registerUser(loginName)
+        userData.name = loginName
+        loginDone = true
+      }
+    })
+  }
+}
+
 // API
-async function registerUser() {
+async function registerUser(name) {
   console.log(`registerUser starting...`)
 
   await userRequest({
     method: 'post',
     url: 'register',
     data: {
-      name: 'paper',
+      name,
     },
   }).then(function (response) {
     console.log(response)
@@ -107,12 +134,21 @@ async function updateScore(score) {
 }
 
 async function showLeaderBoard() {
-  $('.award-list').each(function (index, el) {
-    $(el)
+  const awardList = $('.award-list')
+
+  $(awardList).each(function (index, el) {
+    $(el).find('.rank').text(0)
+    $(el).find('.name').text('null')
+    $(el).find('.score').text(0)
+  })
+
+  leaderBoardData.topUsers.forEach((el, index) => {
+    $(awardList[index])
       .find('.rank')
       .text(index + 1)
-    $(el).find('.name').text(leaderBoardData.topUsers[index].name)
-    $(el).find('.score').text(leaderBoardData.topUsers[index].score)
+
+    $(awardList[index]).find('.name').text(el.name)
+    $(awardList[index]).find('.score').text(el.score)
   })
 
   $('.leaderboard').addClass('active')
@@ -406,6 +442,8 @@ CoinManager.prototype.spawnCoins = function () {
 
   const amplitude = 10 + Math.round(Math.random() * 10)
   game.spawnBaseZ = Math.random() * game.spawnRandomMaxZ
+  const extraNegative = Math.random() >= 0.5 ? -1 : 1
+  const offsetZunit = 3 + Math.random() * 10
 
   for (let i = 0; i < coinCount; i += 1) {
     let coin = null
@@ -422,7 +460,7 @@ CoinManager.prototype.spawnCoins = function () {
     coin.dist = distance + Math.cos(i * 0.5) * amplitude
     coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle) * coin.dist
     coin.mesh.position.x = Math.cos(coin.angle) * coin.dist
-    coin.mesh.position.z = game.spawnBaseZ + i * 10
+    coin.mesh.position.z = game.spawnBaseZ + i * offsetZunit * extraNegative
   }
 }
 
@@ -986,6 +1024,8 @@ function update() {
 function init() {
   console.log(`Init`)
 
+  checkLogin()
+
   resetGame()
   game.status = 'start'
   game.endAnimation = true
@@ -1021,6 +1061,10 @@ function onGameStart() {
       return
     }
 
+    if (loginDone === false) {
+      return
+    }
+
     updateLeaderBoard()
 
     resetGame()
@@ -1044,7 +1088,6 @@ function loadModel(url) {
     gltfLoader.load(
       url,
       (gltf) => {
-        console.log(`loading-1`)
         resolve(gltf)
       },
       null,
