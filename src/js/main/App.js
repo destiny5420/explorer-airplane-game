@@ -1,8 +1,10 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-use-before-define */
 import gsap from 'gsap'
 import * as THREE from 'three'
 import { Maths } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import $, { error } from 'jquery'
 import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
@@ -44,6 +46,8 @@ let enemyManager = null
 let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
 let deltaTime = 0
+let coinMesh = null
+const gltfLoader = new GLTFLoader()
 const enemyPool = []
 const leaderBoardData = {
   topUsers: [],
@@ -367,14 +371,18 @@ EnemyManager.prototype.rotateEnemy = function () {
 }
 
 const Coin = function () {
-  const geom = new THREE.TetrahedronBufferGeometry(5, 0)
+  // const geom = new THREE.TetrahedronBufferGeometry(5, 0)
   const mat = new THREE.MeshPhongMaterial({
-    color: 0x009999,
+    color: 0xffffff,
     shininess: 0,
     specular: 0xffffff,
     flatShading: THREE.FlatShading,
   })
-  this.mesh = new THREE.Mesh(geom, mat)
+  // this.mesh = new THREE.Mesh(geom, mat)
+
+  this.mesh = coinMesh.clone()
+  this.mesh.material = mat
+
   this.mesh.castShadow = true
   this.angle = 0
   this.dist = 0
@@ -391,7 +399,7 @@ const CoinManager = function (count) {
 }
 
 CoinManager.prototype.spawnCoins = function () {
-  const coinCount = 5 + Math.floor(Math.random() * 10)
+  const coinCount = 3 + Math.floor(Math.random() * 5)
 
   const distance =
     game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight - 20)
@@ -414,7 +422,7 @@ CoinManager.prototype.spawnCoins = function () {
     coin.dist = distance + Math.cos(i * 0.5) * amplitude
     coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle) * coin.dist
     coin.mesh.position.x = Math.cos(coin.angle) * coin.dist
-    coin.mesh.position.z = game.spawnBaseZ + i * 5
+    coin.mesh.position.z = game.spawnBaseZ + i * 10
   }
 }
 
@@ -657,6 +665,10 @@ function onKeyupEvent(evt) {
       break
     case CODE_A:
       ambientLight.intensity = 2
+      break
+    case CODE_UP:
+      console.log(`CODE_UP`)
+      createCoins()
       break
     default:
       break
@@ -961,7 +973,10 @@ function update() {
     ambientLight.intensity += (0.0 - ambientLight.intensity) * deltaTime * 0.005
   }
 
-  coinManager.rotateCoins()
+  if (coinManager) {
+    coinManager.rotateCoins()
+  }
+  // coinManager.rotateCoins()
   enemyManager.rotateEnemy()
 
   renderer.render(scene, camera)
@@ -1024,8 +1039,29 @@ function onTouchMoveEvent(event) {
   mousePos = { x: tx, y: ty }
 }
 
-function App() {
+function loadModel(url) {
+  return new Promise((resolve, reject) => {
+    gltfLoader.load(
+      url,
+      (gltf) => {
+        console.log(`loading-1`)
+        resolve(gltf)
+      },
+      null,
+      reject,
+    )
+  })
+}
+
+async function loadingFlow() {
+  const energyModel = await loadModel('/static/model/energy.glb')
+  coinMesh = energyModel.scene.children[0]
+
   window.onpageshow = init
+}
+
+function App() {
+  loadingFlow()
 }
 
 export default App
