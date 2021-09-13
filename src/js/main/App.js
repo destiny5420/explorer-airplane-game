@@ -102,6 +102,8 @@ async function registerUser(name) {
   })
 }
 async function updateLeaderBoard() {
+  console.log(`updateLeaderBoard starting...`)
+
   resetLeaderBoardData()
 
   await userRequest({
@@ -109,8 +111,10 @@ async function updateLeaderBoard() {
     url: '/find',
   })
     .then(function (response) {
+      console.log(`find / response: `, response)
       if (response.data.success) {
         leaderBoardData.topUsers = response.data.result
+        console.log(leaderBoardData.topUsers)
       }
     })
     .catch((err) => {
