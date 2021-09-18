@@ -35,6 +35,55 @@
     }
   }
 
+  .rb-panel {
+    @include independent();
+
+    right: 20px;
+    bottom: 10px;
+
+    .audio-sign {
+      cursor: pointer;
+      width: 30px;
+      position: relative;
+
+      .audio-mute {
+        @include independent(1);
+
+        width: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+
+        &.active {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+
+      .audio-unmute {
+        @include independent(2);
+
+        width: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+
+        &.active {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+
+      .inner {
+        @include aspect-ratio(112, 112);
+
+        width: 100%;
+      }
+    }
+  }
+
   .ui-score {
     @include independent(10);
 

@@ -1115,7 +1115,6 @@ function creditObj() {
   const creditBtnEl = $('#credits')
   const creditPanelEl = $('#credit-panel')
 
-  console.log(self)
   const result = {
     toggle: function () {
       open = !open
@@ -1135,10 +1134,49 @@ function creditObj() {
   return result
 }
 
+function audioObj() {
+  let mute = false
+  const audioSignEl = $('#audio-sign')
+  const audioSignMuteEl = $('#audio-mute')
+  const audioSignUnMuteEl = $('#audio-unmute')
+
+  const result = {
+    init: function () {
+      if (mute) {
+        $(audioSignMuteEl).addClass('active')
+        $(audioSignUnMuteEl).removeClass('active')
+      } else {
+        $(audioSignMuteEl).removeClass('active')
+        $(audioSignUnMuteEl).addClass('active')
+      }
+    },
+    toggle: function () {
+      mute = !mute
+
+      if (mute) {
+        $(audioSignMuteEl).addClass('active')
+        $(audioSignUnMuteEl).removeClass('active')
+      } else {
+        $(audioSignMuteEl).removeClass('active')
+        $(audioSignUnMuteEl).addClass('active')
+      }
+    },
+  }
+
+  $(audioSignEl).on('click', function () {
+    result.toggle()
+  })
+
+  result.init()
+
+  return result
+}
+
 function App() {
   const self = this
 
   self.creditObj = creditObj.call(self)
+  self.audioObj = audioObj.call(self)
 
   loadingFlow()
 }
