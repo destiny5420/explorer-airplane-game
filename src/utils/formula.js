@@ -70,6 +70,11 @@ const Maths = {
   clamp: function (value, min, max) {
     return Math.min(Math.max(value, min), max)
   },
+  getRandomInt: function (min, max) {
+    const tmin = Math.ceil(min)
+    const tmax = Math.floor(max)
+    return Math.floor(Math.random() * (tmax - tmin) + tmin)
+  },
 }
 
 const Loader = {

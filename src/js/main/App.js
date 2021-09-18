@@ -325,7 +325,7 @@ function removeEnergy() {
 }
 
 const Enemy = function () {
-  const geom = new THREE.TetrahedronGeometry(8, 2)
+  const geom = new THREE.TetrahedronGeometry(Maths.getRandomInt(5, 15), Maths.getRandomInt(2, 5))
   const mat = new THREE.MeshPhongMaterial({
     color: Colors.red,
     shininess: 0,
@@ -765,7 +765,7 @@ function resetGame() {
     planeCollisionSpeedY: 0,
 
     seaRadius: 600,
-    seaLength: 800,
+    seaLength: 2000,
 
     wavesMinAmp: 5,
     wavesMaxAmp: 20,
