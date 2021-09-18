@@ -1019,6 +1019,7 @@ function onKeyupEvent(evt) {
     case CODE_F:
       $('#loading').fadeOut(500, function () {
         onCameraTransitionComplete()
+        // startUpCameraPart1()
       })
       break
     case CODE_UP:
