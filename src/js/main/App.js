@@ -163,7 +163,7 @@ async function updateScore(score) {
     .catch((err) => console.error(err))
 }
 
-async function showLeaderBoard() {
+function showLeaderBoard(score) {
   const awardList = $('.award-list')
 
   $(awardList).each(function (index, el) {
@@ -172,14 +172,59 @@ async function showLeaderBoard() {
     $(el).find('.score').text(0)
   })
 
-  leaderBoardData.topUsers.forEach((el, index) => {
-    $(awardList[index])
-      .find('.rank')
-      .text(index + 1)
+  const tmpLeaderBoard = []
+  let userInLeaderBoard = false
 
-    $(awardList[index]).find('.name').text(el.name)
-    $(awardList[index]).find('.score').text(el.score)
+  leaderBoardData.topUsers.forEach((el) => {
+    if (el.name === userData.name) {
+      userInLeaderBoard = true
+      if (score > el.score) {
+        tmpLeaderBoard.push({
+          name: el.name,
+          score: score,
+        })
+      } else {
+        tmpLeaderBoard.push({
+          name: el.name,
+          score: el.score,
+        })
+      }
+    } else {
+      tmpLeaderBoard.push({
+        name: el.name,
+        score: el.score,
+      })
+    }
   })
+
+  if (userInLeaderBoard === false) {
+    tmpLeaderBoard.push({
+      name: userData.name,
+      score: score,
+    })
+  }
+
+  tmpLeaderBoard.sort(function (a, b) {
+    if (a.score < b.score) {
+      return 1
+    }
+
+    if (a.score > b.score) {
+      return -1
+    }
+
+    return 0
+  })
+
+  for (let i = 0; i < 3; i += 1) {
+    $(awardList[i])
+      .find('.rank')
+      .text(i + 1)
+
+    $(awardList[i]).find('.name').text(tmpLeaderBoard[i].name)
+
+    $(awardList[i]).find('.score').text(tmpLeaderBoard[i].score)
+  }
 
   $('.leaderboard').addClass('active')
 }
@@ -624,8 +669,9 @@ const airplaneMoveToResult = function () {
 }
 
 function onCameraMoveToResultCallback() {
-  updateScore(Math.floor(game.distance))
-  showLeaderBoard()
+  const score = Math.floor(game.distance)
+  updateScore(score)
+  showLeaderBoard(score)
   game.endAnimation = true
 }
 
