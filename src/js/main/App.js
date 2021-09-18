@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import $, { error } from 'jquery'
-import { CODE_A, CODE_ENTER, CODE_UP } from 'keycode-js'
+import { CODE_A, CODE_ENTER, CODE_UP, CODE_C, CODE_F } from 'keycode-js'
 import Configure from '@/utils/Configure'
 import axios from 'axios'
 
@@ -18,6 +18,25 @@ const Colors = {
   pink: 0xf5986e,
   brownDark: 0x23190f,
   blue: 0x68c3c0,
+}
+
+const cameraStartup = {
+  part1: {
+    posX: 154,
+    posY: 97,
+    posZ: 57,
+    rotX: 0,
+    rotY: 0,
+    rotZ: 0,
+  },
+  part2: {
+    posX: -130,
+    posY: 97,
+    posZ: 57,
+    rotX: 0,
+    rotY: 0,
+    rotZ: 0,
+  },
 }
 
 const sizes = {
@@ -43,8 +62,11 @@ let ambientLight = null
 let shadowLight = null
 let coinManager = null
 let enemyManager = null
+let particleManager = null
 let newTime = new Date().getTime()
 let oldTime = new Date().getTime()
+const particlesPool = []
+const particlesInUse = []
 let deltaTime = 0
 let coinMesh = null
 let loginDone = false
@@ -60,6 +82,10 @@ const userRequest = axios.create({
 const userData = {
   name: 'postman-raw-name',
 }
+
+// const gui = new dat.GUI()
+// const cameraFolder = gui.addFolder('Camera')
+// cameraFolder.open()
 
 function checkLogin() {
   const userName = Event.getCookieByName('boat-game-username')
@@ -220,14 +246,14 @@ const Sky = function () {
     const cloud = new Cloud()
 
     const a = stepAngle * i
-    const h = 750 + Math.random() * 200
+    const h = 650 + Math.random() * 200
 
     cloud.mesh.position.y = Math.sin(a) * h
     cloud.mesh.position.x = Math.cos(a) * h
 
     cloud.mesh.rotation.z = a + Math.PI / 2
 
-    cloud.mesh.position.z = -400 - Math.random() * 400
+    cloud.mesh.position.z = -150 - Math.random() * 500
 
     const scale = 1 + Math.random() * 2
     cloud.mesh.scale.set(scale, scale, scale)
@@ -390,6 +416,7 @@ EnemyManager.prototype.rotateEnemy = function () {
     if (d < game.enemyDistanceTolerance && !isGameOver()) {
       console.error('The coin collide with enemy!!!')
       // 1. play particle
+      particleManager.spawnParticles(enemy.mesh.position.clone(), 15, Colors.red, 3)
 
       // 2. plane collider event
       game.planeCollisionSpeedY = (100 * diffPos.y) / d
@@ -486,6 +513,7 @@ CoinManager.prototype.rotateCoins = function () {
       console.log('The coin collide with airplane!!!')
       this.coinsPool.unshift(this.coinsInUse.splice(i, 1)[0])
       this.mesh.remove(coin.mesh)
+      particleManager.spawnParticles(coin.mesh.position.clone(), 5, '#24ff2c', 0.8)
       addEnergy()
       i -= 1
     } else if (coin.angle > Math.PI) {
@@ -493,6 +521,88 @@ CoinManager.prototype.rotateCoins = function () {
       this.mesh.remove(coin.mesh)
       i -= 1
     }
+  }
+}
+
+const Particle = function () {
+  const geom = new THREE.TetrahedronGeometry(3, 0)
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0x009999,
+    shininess: 0,
+    specular: 0xffffff,
+    flatShading: THREE.FlatShading,
+  })
+  this.mesh = new THREE.Mesh(geom, mat)
+}
+
+Particle.prototype.explode = function (pos, color, scale) {
+  const self = this
+  const parent = this.mesh.parent
+
+  this.mesh.material.color = new THREE.Color(color)
+  this.mesh.material.needsUpdate = true
+  this.mesh.scale.set(scale, scale, scale)
+
+  const targetX = pos.x + (-1 + Math.random() * 2) * 50
+  const targetY = pos.y + (-1 + Math.random() * 2) * 50
+  const targetZ = pos.z + (-1 + Math.random() * 2) * 50
+  const speed = 0.6 + Math.random() * 0.2
+
+  gsap.to(this.mesh.rotation, {
+    x: Math.random() * 12,
+    y: Math.random() * 12,
+    duration: speed,
+  })
+
+  gsap.to(this.mesh.scale, {
+    x: 0.1,
+    y: 0.1,
+    z: 0.1,
+    duration: speed,
+  })
+
+  gsap.to(this.mesh.position, {
+    x: targetX,
+    y: targetY,
+    z: targetZ,
+    delay: Math.random() * 0.1,
+    duration: speed,
+    ease: 'power2.out',
+    onComplete: function () {
+      if (parent) {
+        parent.remove(self.mesh)
+      }
+
+      self.mesh.scale.set(1, 1, 1)
+      particlesPool.unshift(self)
+    },
+  })
+}
+
+const ParticleManager = function () {
+  this.mesh = new THREE.Object3D()
+  this.particlesInUse = []
+}
+
+ParticleManager.prototype.spawnParticles = function (pos, density, color, scale) {
+  const particleCount = density
+
+  for (let i = 0; i < particleCount; i += 1) {
+    let particle
+
+    if (particlesPool.length) {
+      particle = particlesPool.pop()
+    } else {
+      particle = new Particle()
+    }
+
+    this.mesh.add(particle.mesh)
+
+    particle.mesh.visible = true
+    particle.mesh.position.x = pos.x
+    particle.mesh.position.y = pos.y
+    particle.mesh.position.z = pos.z
+    particle.explode(pos, color, scale)
   }
 }
 
@@ -700,6 +810,155 @@ function onMouseMoveEvent(evt) {
   }
 }
 
+function startUpCameraPart1() {
+  gsap
+    .timeline()
+    .fromTo(
+      camera.rotation,
+      {
+        x: cameraStartup.part1.rotX,
+        y: cameraStartup.part1.rotY,
+        z: cameraStartup.part1.rotZ,
+      },
+      {
+        x: cameraStartup.part2.rotX,
+        y: cameraStartup.part2.rotY,
+        z: cameraStartup.part2.rotZ,
+        duration: 0,
+      },
+    )
+    .fromTo(
+      camera.position,
+      {
+        x: cameraStartup.part1.posX,
+        y: cameraStartup.part1.posY,
+        z: cameraStartup.part1.posZ,
+      },
+      {
+        x: cameraStartup.part2.posX,
+        y: cameraStartup.part2.posY,
+        z: cameraStartup.part2.posZ,
+        duration: 3,
+        ease: 'power1.in',
+        onComplete: function () {
+          startUpCameraPart2()
+        },
+      },
+    )
+}
+
+function startUpCameraPart2() {
+  gsap
+    .timeline()
+    .fromTo(
+      camera.rotation,
+      {
+        x: 0,
+        y: 1.6,
+        z: 0,
+      },
+      {
+        x: 0,
+        y: 1.6,
+        z: 0,
+        duration: 0,
+      },
+    )
+    .fromTo(
+      camera.position,
+      {
+        x: 210,
+        y: 97,
+        z: 0,
+      },
+      {
+        x: 9,
+        y: 97,
+        z: 0,
+        duration: 3,
+        ease: 'power1.out',
+        onComplete: function () {
+          startUpCameraPart3()
+        },
+      },
+    )
+}
+
+function startUpCameraPart3() {
+  gsap
+    .timeline()
+    .fromTo(
+      camera.rotation,
+      {
+        x: game.cameraPlayingGameRot.x,
+        y: game.cameraPlayingGameRot.y,
+        z: game.cameraPlayingGameRot.z,
+      },
+      {
+        x: game.cameraPlayingGameRot.x,
+        y: game.cameraPlayingGameRot.y,
+        z: game.cameraPlayingGameRot.z,
+        duration: 0,
+      },
+    )
+    .fromTo(
+      camera.position,
+      {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      {
+        x: game.cameraPlayingGamePos.x,
+        y: game.cameraPlayingGamePos.y,
+        z: game.cameraPlayingGamePos.z,
+        duration: 2,
+        ease: 'power1.out',
+        onComplete: function () {
+          onCameraTransitionComplete()
+        },
+      },
+    )
+}
+
+function onCameraTransitionComplete() {
+  $('.webgl').on('touchmove', onTouchMoveEvent)
+  $('.webgl').on('mouseup', onMouseUpEvent)
+  $('.webgl').on('touchend', onTouchEndEvent)
+
+  $('.message').removeClass('active')
+
+  gsap
+    .timeline()
+    .fromTo(
+      '.lb-panel .anim',
+      {
+        y: 50,
+        opacity: 0,
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power1.out',
+      },
+    )
+    .fromTo(
+      '.rb-panel .anim',
+      {
+        y: 50,
+        opacity: 0,
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power1.out',
+      },
+      '-=0.75',
+    )
+}
+
 function onKeyupEvent(evt) {
   switch (evt.code) {
     case CODE_ENTER:
@@ -707,6 +966,14 @@ function onKeyupEvent(evt) {
       break
     case CODE_A:
       ambientLight.intensity = 2
+      break
+    case CODE_C:
+      startUpCameraPart1()
+      break
+    case CODE_F:
+      $('#loading').fadeOut(500, function () {
+        onCameraTransitionComplete()
+      })
       break
     case CODE_UP:
       console.log(`CODE_UP`)
@@ -827,13 +1094,19 @@ function createScene() {
 
   // camera
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
-  camera.position.x = game.cameraPlayingGamePos.x
-  camera.position.y = game.cameraPlayingGamePos.y
-  camera.position.z = game.cameraPlayingGamePos.z
-  camera.rotation.x = game.cameraPlayingGameRot.x
-  camera.rotation.y = game.cameraPlayingGameRot.y
-  camera.rotation.z = game.cameraPlayingGameRot.z
+  camera.position.x = cameraStartup.part1.posX
+  camera.position.y = cameraStartup.part1.posY
+  camera.position.z = cameraStartup.part1.posZ
+  camera.rotation.x = cameraStartup.part1.rotX
+  camera.rotation.y = cameraStartup.part1.rotY
+  camera.rotation.z = cameraStartup.part1.rotZ
 
+  // cameraFolder.add(camera.position, 'x').min(-365).max(365).step(1)
+  // cameraFolder.add(camera.position, 'y').min(-365).max(365).step(1)
+  // cameraFolder.add(camera.position, 'z').min(-365).max(365).step(1)
+  // cameraFolder.add(camera.rotation, 'x').min(-2).max(2).step(0.1)
+  // cameraFolder.add(camera.rotation, 'y').min(-2).max(2).step(0.1)
+  // cameraFolder.add(camera.rotation, 'z').min(-2).max(2).step(0.1)
   // renderer
   renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -906,6 +1179,16 @@ function createEnemys() {
 
   enemyManager = new EnemyManager()
   scene.add(enemyManager.mesh)
+}
+
+function createParticles() {
+  for (let i = 0; i < 10; i += 1) {
+    const particle = new Particle()
+    particlesPool.push(particle)
+  }
+
+  particleManager = new ParticleManager()
+  scene.add(particleManager.mesh)
 }
 
 function onStart() {}
@@ -1041,21 +1324,21 @@ function init() {
   createSky()
   createCoins()
   createEnemys()
+  createParticles()
 
   document.addEventListener('mousemove', onMouseMoveEvent, false)
-  document.addEventListener('touchmove', onTouchMoveEvent, false)
-  document.addEventListener('mouseup', onMouseUpEvent, false)
-  document.addEventListener('touchend', onTouchEndEvent, false)
   document.addEventListener('keyup', onKeyupEvent, false)
 
   update()
 }
 
 function onMouseUpEvent() {
+  console.log(`onMouseUpEvent`)
   onGameStart()
 }
 
 function onTouchEndEvent() {
+  console.log(`onTouchEndEvent`)
   onGameStart()
 }
 

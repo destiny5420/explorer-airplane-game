@@ -41,19 +41,24 @@
   </head>
   <body>
     <div class="container">
+      <div id="loading" class="loading"></div>
       <div class="ui">
         <div class="lb-panel color-gray">
-          <p id="credits" class="word cursor-pointer">CREDITS</p>
+          <div class="anim">
+            <p id="credits" class="word cursor-pointer">CREDITS</p>
+          </div>
         </div>
         <div class="rb-panel">
-          <div id="audio-sign" class="audio-sign flex-center">
-            <div id="audio-mute" class="audio-mute flex-center">
-              <img src="./images/ui/mute.png" alt="mute" class="w-full" />
+          <div class="anim">
+            <div id="audio-sign" class="audio-sign flex-center">
+              <div id="audio-mute" class="audio-mute flex-center">
+                <img src="./images/ui/mute.png" alt="mute" class="w-full" />
+              </div>
+              <div id="audio-unmute" class="audio-unmute flex-center">
+                <img src="./images/ui/unmute.png" alt="unmute" class="w-full" />
+              </div>
+              <div class="inner"></div>
             </div>
-            <div id="audio-unmute" class="audio-unmute flex-center">
-              <img src="./images/ui/unmute.png" alt="unmute" class="w-full" />
-            </div>
-            <div class="inner"></div>
           </div>
         </div>
         <div id="credit-panel" class="credit-panel transing-50">
@@ -77,8 +82,8 @@
             </div>
           </div>
         </div>
-        <div class="message">
-          <p class="text">CLICK TO PLAY</p>
+        <div class="message active">
+          <p class="text f-acme">CLICK TO PLAY</p>
         </div>
         <div class="leaderboard">
           <div class="wrap">

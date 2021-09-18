@@ -1,16 +1,33 @@
+.loading {
+  @include size(100%);
+
+  z-index: 20;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffbe76;
+}
+
 .ui {
   @include independent(10);
   @include size(100%, 100vh);
 
+  pointer-events: none;
   top: 0;
   left: 0;
 
   .lb-panel {
     @include independent();
 
+    pointer-events: all;
     bottom: 10px;
     left: 20px;
     font-weight: 700;
+
+    .anim {
+      transform: translateY(50px);
+      opacity: 0;
+    }
 
     .word {
       position: relative;
@@ -38,8 +55,14 @@
   .rb-panel {
     @include independent();
 
+    pointer-events: all;
     right: 20px;
     bottom: 10px;
+
+    .anim {
+      opacity: 0;
+      transform: translateY(50px);
+    }
 
     .audio-sign {
       cursor: pointer;
@@ -139,15 +162,15 @@
   .message {
     @include independent(10);
 
-    bottom: 15%;
+    bottom: 35%;
     left: 50%;
     font-size: 24px;
-    color: #374151;
+    color: #6c6e71;
     opacity: 1;
     transition: 0.25s ease;
     cursor: pointer;
     transform: translate(-50%, 0%);
-    pointer-events: all;
+    pointer-events: none;
 
     &.active {
       opacity: 0;
