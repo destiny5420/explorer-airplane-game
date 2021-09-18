@@ -1,264 +1,342 @@
-.ui-score {
+.ui {
   @include independent(10);
+  @include size(100%, 100vh);
 
-  top: 60px;
-  left: 25px;
-  font-size: 60px;
-  text-align: left;
-  color: rgba($color: #404040, $alpha: 0.5);
-  transform: translate(0, -50%) skew(0deg, -5deg);
-}
+  top: 0;
+  left: 0;
 
-.energy-bar {
-  @include independent(10);
+  .lb-panel {
+    @include independent();
 
-  bottom: 5%;
-  left: 50%;
-  transform: translate(-50%, 0%);
+    bottom: 10px;
+    left: 20px;
+    font-weight: 700;
 
-  &.active {
+    .word {
+      position: relative;
+      padding-bottom: 4px;
+
+      &::after {
+        @include independent();
+        @include size(0%, 3px);
+
+        bottom: 0;
+        left: 0;
+        background-color: #404040;
+        transition: width 0.25s;
+        content: '';
+      }
+
+      &:hover {
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .ui-score {
+    @include independent(10);
+
+    top: 60px;
+    left: 25px;
+    font-size: 60px;
+    text-align: left;
+    color: rgba($color: #404040, $alpha: 0.5);
+    transform: translate(0, -50%) skew(0deg, -5deg);
+  }
+
+  .energy-bar {
+    @include independent(10);
+
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+
+    &.active {
+      .wrap {
+        transform: translateY(0);
+      }
+    }
+
     .wrap {
-      transform: translateY(0);
+      @include size(250px, 50px);
+
+      padding: 8px;
+      background-color: #fafafa;
+      border-radius: 15px;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
+      transition: 0.5s ease-out;
+      transform: translateY(200px);
+    }
+
+    .inner {
+      @include size(100%);
+
+      overflow: hidden;
+      background-color: #737373;
+      border-radius: 8px;
+      transform-style: preserve-3d;
+    }
+
+    .bar {
+      @include size(100%);
+
+      background-color: #6ee7b7;
+      transform: translateX(0);
     }
   }
 
-  .wrap {
-    @include size(250px, 50px);
+  .message {
+    @include independent(10);
 
-    padding: 8px;
-    background-color: #fafafa;
-    border-radius: 15px;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
-    transition: 0.5s ease-out;
-    transform: translateY(200px);
-  }
+    bottom: 15%;
+    left: 50%;
+    font-size: 24px;
+    color: #374151;
+    opacity: 1;
+    transition: 0.25s ease;
+    cursor: pointer;
+    transform: translate(-50%, 0%);
+    pointer-events: all;
 
-  .inner {
-    @include size(100%);
-
-    overflow: hidden;
-    background-color: #737373;
-    border-radius: 8px;
-    transform-style: preserve-3d;
-  }
-
-  .bar {
-    @include size(100%);
-
-    background-color: #6ee7b7;
-    transform: translateX(0);
-  }
-}
-
-.message {
-  @include independent(10);
-
-  bottom: 15%;
-  left: 50%;
-  font-size: 24px;
-  color: #374151;
-  opacity: 1;
-  transition: 0.25s ease;
-  cursor: pointer;
-  transform: translate(-50%, 0%);
-  pointer-events: all;
-
-  &.active {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .text {
-    animation: flash-anim 1.5s 0s infinite both linear;
-  }
-
-  @keyframes flash-anim {
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
+    &.active {
       opacity: 0;
+      pointer-events: none;
+    }
+
+    .text {
+      animation: flash-anim 1.5s 0s infinite both linear;
+    }
+
+    @keyframes flash-anim {
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
     }
   }
-}
 
-.leaderboard {
-  @include independent(10);
-  @include size(40%, auto);
+  .leaderboard {
+    @include independent(10);
+    @include size(40%, auto);
 
-  top: 50%;
-  left: 10%;
-  transform: translate(0%, -50%);
+    top: 50%;
+    left: 10%;
+    transform: translate(0%, -50%);
 
-  &.active {
+    &.active {
+      .wrap {
+        opacity: 1;
+        transition: 0.25s ease;
+      }
+
+      .list-1 {
+        opacity: 1;
+        transform: translateY(0);
+        transition: 0.25s 0.5s ease;
+      }
+
+      .list-2 {
+        opacity: 1;
+        transform: translateY(0);
+        transition: 0.25s 0.75s ease;
+      }
+
+      .list-3 {
+        opacity: 1;
+        transform: translateY(0);
+        transition: 0.25s 1s ease;
+      }
+
+      .list-4 {
+        opacity: 1;
+        transform: translateY(0);
+        transition: 0.25s 1.25s ease;
+      }
+    }
+
     .wrap {
-      opacity: 1;
-      transition: 0.25s ease;
+      @include flex-center(column);
+
+      width: 100%;
+      max-width: 600px;
+      justify-content: flex-start;
+      padding: 20px;
+      padding-top: 50px;
+      margin: 0 auto;
+      background-color: rgba($color: #e7e5e4, $alpha: 0.5);
+      border-radius: 15px;
+      opacity: 0;
+      transition: 0.15s ease;
+    }
+
+    .title {
+      @include independent();
+
+      top: 0%;
+      left: 50%;
+      padding: 15px 50px;
+      font-size: 32px;
+      background-color: #737373;
+      border: 5px solid #404040;
+      border-radius: 10px;
+      transform: translate(-50%, -50%);
+    }
+
+    .list-wrap {
+      @include flex-center(column);
+      @include size(100%, 100%);
+
+      justify-content: flex-start;
+    }
+
+    .list {
+      @include flex-center();
+      @include size(100%, 12.5%);
+
+      position: relative;
+      justify-content: space-between;
+      padding: 15px 20px;
+      margin: 1% 0;
+      font-size: 24px;
+      background-color: #fff;
+      border-radius: 10px;
+
+      .award {
+        width: 15%;
+      }
+
+      .rank {
+        width: 20%;
+      }
+
+      .name {
+        width: 30%;
+      }
+
+      .score {
+        width: 35%;
+      }
     }
 
     .list-1 {
-      opacity: 1;
-      transform: translateY(0);
-      transition: 0.25s 0.5s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.25s ease;
     }
 
     .list-2 {
-      opacity: 1;
-      transform: translateY(0);
-      transition: 0.25s 0.75s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.25s ease;
     }
 
     .list-3 {
-      opacity: 1;
-      transform: translateY(0);
-      transition: 0.25s 1s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.25s ease;
     }
 
     .list-4 {
-      opacity: 1;
-      transform: translateY(0);
-      transition: 0.25s 1.25s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.25s ease;
     }
   }
 
-  .wrap {
-    @include flex-center(column);
+  .login-panel {
+    @include independent(20);
 
-    width: 100%;
-    max-width: 600px;
-    justify-content: flex-start;
-    padding: 20px;
-    padding-top: 50px;
-    margin: 0 auto;
-    background-color: rgba($color: #e7e5e4, $alpha: 0.5);
-    border-radius: 15px;
-    opacity: 0;
-    transition: 0.15s ease;
-  }
-
-  .title {
-    @include independent();
-
-    top: 0%;
+    top: 50%;
     left: 50%;
-    padding: 15px 50px;
-    font-size: 32px;
-    background-color: #737373;
-    border: 5px solid #404040;
-    border-radius: 10px;
     transform: translate(-50%, -50%);
-  }
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.25s ease;
 
-  .list-wrap {
-    @include flex-center(column);
-    @include size(100%, 100%);
-
-    justify-content: flex-start;
-  }
-
-  .list {
-    @include flex-center();
-    @include size(100%, 12.5%);
-
-    position: relative;
-    justify-content: space-between;
-    padding: 15px 20px;
-    margin: 1% 0;
-    font-size: 24px;
-    background-color: #fff;
-    border-radius: 10px;
-
-    .award {
-      width: 15%;
+    &.active {
+      opacity: 1;
+      pointer-events: all;
     }
 
-    .rank {
-      width: 20%;
+    .wrap {
+      @include flex-center();
+
+      .input-login-name {
+        height: 50px;
+        padding: 26px 18px;
+        margin-right: 5px;
+        font-size: 30px;
+        border-color: transparent;
+        border-radius: 10px;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .btn-login {
+        padding: 10px 15px;
+        font-size: 20px;
+        background-color: #e5e5e5;
+        border-color: transparent;
+        border-radius: 10px;
+        transition: 0.25s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #a3a3a3;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
     }
-
-    .name {
-      width: 30%;
-    }
-
-    .score {
-      width: 35%;
-    }
-  }
-
-  .list-1 {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: 0.25s ease;
-  }
-
-  .list-2 {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: 0.25s ease;
-  }
-
-  .list-3 {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: 0.25s ease;
-  }
-
-  .list-4 {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: 0.25s ease;
   }
 }
 
-.login-panel {
-  @include independent(20);
+.credit-panel {
+  @include independent(15);
+  @include size(100%);
 
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  background-color: #374151;
   opacity: 0;
   pointer-events: none;
-  transition: 0.25s ease;
 
-  &.active {
+  &.open {
     opacity: 1;
     pointer-events: all;
   }
 
   .wrap {
     @include flex-center();
+    @include size(100%);
 
-    .input-login-name {
-      height: 50px;
-      padding: 26px 18px;
-      margin-right: 5px;
-      font-size: 30px;
-      border-color: transparent;
-      border-radius: 10px;
+    flex-direction: column;
 
-      &:focus {
-        outline: none;
-      }
+    h2 {
+      font-size: 36px;
+      color: $color-white;
+      line-height: 2;
     }
 
-    .btn-login {
-      padding: 10px 15px;
-      font-size: 20px;
-      background-color: #e5e5e5;
-      border-color: transparent;
-      border-radius: 10px;
-      transition: 0.25s ease;
-      cursor: pointer;
+    h3 {
+      font-size: 24px;
+      color: $color-yellow;
+      line-height: 2;
+    }
 
-      &:hover {
-        background-color: #a3a3a3;
-      }
-
-      &:focus {
-        outline: none;
-      }
+    h4 {
+      font-size: 18px;
+      color: $color-gray-1;
+      line-height: 1.5;
+      border-bottom: 3px solid $color-gray-1;
     }
   }
 }

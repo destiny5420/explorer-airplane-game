@@ -1104,10 +1104,42 @@ async function loadingFlow() {
   const energyModel = await loadModel('/static/model/energy.glb')
   coinMesh = energyModel.scene.children[0]
 
-  window.onpageshow = init
+  window.onpageshow = () => {
+    init()
+  }
+}
+
+function creditObj() {
+  const self = this
+  let open = false
+  const creditBtnEl = $('#credits')
+  const creditPanelEl = $('#credit-panel')
+
+  console.log(self)
+  const result = {
+    toggle: function () {
+      open = !open
+
+      if (open) {
+        $(creditPanelEl).addClass('open')
+      } else {
+        $(creditPanelEl).removeClass('open')
+      }
+    },
+  }
+
+  $(creditBtnEl).on('click', function () {
+    result.toggle()
+  })
+
+  return result
 }
 
 function App() {
+  const self = this
+
+  self.creditObj = creditObj.call(self)
+
   loadingFlow()
 }
 
