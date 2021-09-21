@@ -485,12 +485,11 @@ EnemyManager.prototype.rotateEnemy = function () {
 const Coin = function () {
   // const geom = new THREE.TetrahedronBufferGeometry(5, 0)
   const mat = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
+    color: '#90f7b7',
     shininess: 0,
     specular: 0xffffff,
     flatShading: THREE.FlatShading,
   })
-  // this.mesh = new THREE.Mesh(geom, mat)
 
   this.mesh = coinMesh.clone()
   this.mesh.material = mat
@@ -1431,8 +1430,10 @@ function loadModel(url) {
 }
 
 async function loadingFlow() {
-  const energyModel = await loadModel('/static/model/energy.glb')
+  const energyModel = await loadModel('/static/model/scene.glb')
+  console.log(`energyModel: `, energyModel)
   coinMesh = energyModel.scene.children[0]
+  coinMesh.scale.set(1, 1, 1)
 
   window.onpageshow = () => {
     init()
