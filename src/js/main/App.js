@@ -967,6 +967,7 @@ function startUpCameraPart3() {
 }
 
 function onCameraTransitionComplete() {
+  checkLogin()
   $('.webgl').on('touchmove', onTouchMoveEvent)
   $('.webgl').on('mouseup', onMouseUpEvent)
   $('.webgl').on('touchend', onTouchEndEvent)
@@ -1355,8 +1356,6 @@ function update() {
 
 function init() {
   console.log(`Init`)
-
-  checkLogin()
 
   resetGame()
   game.status = 'start'
