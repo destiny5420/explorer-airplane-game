@@ -1007,23 +1007,22 @@ function onCameraTransitionComplete() {
 function onKeyupEvent(evt) {
   switch (evt.code) {
     case CODE_ENTER:
-      updateScore(Math.floor(game.distance))
+      // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
-      ambientLight.intensity = 2
+      // ambientLight.intensity = 2
       break
     case CODE_C:
-      startUpCameraPart1()
+      // startUpCameraPart1()
       break
     case CODE_F:
-      $('#loading').fadeOut(500, function () {
-        onCameraTransitionComplete()
-        // startUpCameraPart1()
-      })
+      // $('#loading').fadeOut(500, function () {
+      //   // onCameraTransitionComplete()
+      //   startUpCameraPart1()
+      // })
       break
     case CODE_UP:
-      console.log(`CODE_UP`)
-      createCoins()
+      // createCoins()
       break
     default:
       break
@@ -1376,6 +1375,10 @@ function init() {
   document.addEventListener('keyup', onKeyupEvent, false)
 
   update()
+
+  $('#loading').fadeOut(500, function () {
+    startUpCameraPart1()
+  })
 }
 
 function onMouseUpEvent() {
@@ -1430,14 +1433,11 @@ function loadModel(url) {
 }
 
 async function loadingFlow() {
-  const energyModel = await loadModel('/static/model/scene.glb')
-  console.log(`energyModel: `, energyModel)
+  const energyModel = await loadModel('/static/model/battery.glb')
+  // console.log(`energyModel: `, energyModel)
   coinMesh = energyModel.scene.children[0]
   coinMesh.scale.set(1, 1, 1)
-
-  window.onpageshow = () => {
-    init()
-  }
+  init()
 }
 
 function creditObj() {
