@@ -10,6 +10,7 @@ import $, { error } from 'jquery'
 import { CODE_A, CODE_ENTER, CODE_UP, CODE_C, CODE_F } from 'keycode-js'
 import Configure from '@/utils/Configure'
 import axios from 'axios'
+import AudioManager from '@/js/main/AudioManager'
 
 const Colors = {
   red: 0xf25346,
@@ -49,6 +50,7 @@ let mousePos = {
   y: 0.0,
 }
 
+const audioManager = new AudioManager()
 let prevMouseX = 0
 let game = null
 let scene = null
@@ -1400,6 +1402,7 @@ function onGameStart() {
       return
     }
 
+    audioManager.play(Configure.AUDIO_FX_PLAY_BUTTON)
     updateLeaderBoard()
 
     resetGame()

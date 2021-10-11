@@ -89,7 +89,7 @@ module.exports = {
         exclude: path.resolve('./node_modules'),
       },
       {
-        test: /\.mp3$/,
+        test: /\.(mp3|wav)$/,
         use: [
           {
             loader: 'file-loader',
@@ -104,10 +104,8 @@ module.exports = {
       {
         test: /\.(glsl|vs|fs|vert|frag)$/,
         exclude: /node_modules/,
-        use: [
-            'raw-loader'
-        ]
-    }
+        use: ['raw-loader'],
+      },
     ],
   },
   plugins: [
