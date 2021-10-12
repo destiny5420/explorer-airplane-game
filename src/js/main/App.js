@@ -461,7 +461,6 @@ EnemyManager.prototype.rotateEnemy = function () {
     const d = diffPos.length()
 
     if (d < game.enemyDistanceTolerance && !isGameOver()) {
-      console.error('The coin collide with enemy!!!')
       // 1. play particle
       particleManager.spawnParticles(enemy.mesh.position.clone(), 15, Colors.red, 3)
 
@@ -476,6 +475,8 @@ EnemyManager.prototype.rotateEnemy = function () {
       this.mesh.remove(enemy.mesh)
 
       i -= 1
+
+      audioManager.play(Configure.AUDIO_FX_HIT)
     } else if (enemy.angle > Math.PI) {
       enemyPool.unshift(this.enemiesInUse.splice(i, 1)[0])
       this.mesh.remove(enemy.mesh)
@@ -561,6 +562,8 @@ CoinManager.prototype.rotateCoins = function () {
       this.mesh.remove(coin.mesh)
       particleManager.spawnParticles(coin.mesh.position.clone(), 5, '#24ff2c', 0.8)
       addEnergy()
+
+      audioManager.play(Configure.AUDIO_FX_GET_ENERGY)
       i -= 1
     } else if (coin.angle > Math.PI) {
       this.coinsPool.unshift(this.coinsInUse.splice(i, 1)[0])
@@ -1403,6 +1406,7 @@ function onGameStart() {
     }
 
     audioManager.play(Configure.AUDIO_FX_PLAY_BUTTON)
+    audioManager.play(Configure.AUDIO_BGM_01)
     updateLeaderBoard()
 
     resetGame()
