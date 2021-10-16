@@ -240,9 +240,13 @@ function showLeaderBoard(score) {
       .find('.rank')
       .text(i + 1)
 
-    $(awardList[i]).find('.name').text(tmpLeaderBoard[i].name)
+    $(awardList[i])
+      .find('.name')
+      .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].name : '')
 
-    $(awardList[i]).find('.score').text(tmpLeaderBoard[i].score)
+    $(awardList[i])
+      .find('.score')
+      .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].score : '')
   }
 
   $('.leaderboard').addClass('active')
