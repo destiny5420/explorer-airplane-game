@@ -323,11 +323,9 @@
 
   .login-panel {
     @include independent(20);
+    @include size(100%);
 
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
+    opacity: 1;
     pointer-events: none;
     transition: 0.25s ease;
 
@@ -339,34 +337,79 @@
     .wrap {
       @include flex-center();
 
-      .input-login-name {
-        height: 50px;
-        padding: 26px 18px;
-        margin-right: 5px;
-        font-size: 30px;
+      width: 95%;
+      height: 100%;
+      max-width: 510px;
+      align-items: stretch;
+      margin: 0 auto;
+
+      .form {
+        @include flex-center(column);
+
+        width: 100%;
+        align-items: stretch;
+      }
+
+      .input-login-name,
+      .input-login-email {
+        padding: 10px 20px;
+        margin-bottom: 22px;
+        font-size: 22px;
+        background-color: rgba($color: #fff, $alpha: 0.7);
         border-color: transparent;
-        border-radius: 10px;
+        border-radius: 16px;
 
         &:focus {
           outline: none;
         }
       }
 
-      .btn-login {
-        padding: 10px 15px;
-        font-size: 20px;
-        background-color: #e5e5e5;
-        border-color: transparent;
-        border-radius: 10px;
-        transition: 0.25s ease;
-        cursor: pointer;
+      .btn-login-block {
+        @include flex-center();
 
-        &:hover {
-          background-color: #a3a3a3;
+        position: relative;
+        margin-top: 40px;
+
+        .btn-login {
+          @include size(250px, 50px);
+
+          z-index: 1;
+          position: relative;
+          background-color: #fff;
+          border: 3px solid #fe715e;
+          border-radius: 38px;
+          transition: 0.25s ease;
+          cursor: pointer;
+          transform: translateY(-10px);
+
+          &:hover {
+            background-color: #f8fd6d;
+            transform: translateY(-3px);
+          }
+
+          .img {
+            @include independent();
+
+            width: 62%;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+
+          &:focus {
+            outline: none;
+          }
         }
 
-        &:focus {
-          outline: none;
+        .shadow {
+          @include independent(0);
+          @include size(250px, 50px);
+
+          top: 50%;
+          left: 50%;
+          background-color: #fe715e;
+          border-radius: 38px;
+          transform: translate(-50%, -50%);
         }
       }
     }

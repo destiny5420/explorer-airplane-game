@@ -83,6 +83,7 @@ const userRequest = axios.create({
 })
 const userData = {
   name: 'postman-raw-name',
+  email: 'postman-raw-email',
 }
 
 // const gui = new dat.GUI()
@@ -90,12 +91,14 @@ const userData = {
 // cameraFolder.open()
 
 function checkLogin() {
-  const userName = Event.getCookieByName('boat-game-username')
+  const userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
+  const userEmail = localStorage.getItem(Configure.LOCAL_STORAGE_EMAIL)
 
   if (userName) {
-    console.warn(`Already login! userName: ${userName}`)
+    console.warn(`Already login! userName: ${userName} / userEmail: ${userEmail}`)
     registerUser(userName)
     userData.name = userName
+    userData.email = userEmail
     loginDone = true
   } else {
     console.warn('show login panel')
@@ -106,9 +109,12 @@ function checkLogin() {
         $('.login-panel').removeClass('active')
         $('#input-login-name').prop('disabled', true)
         const loginName = $('#input-login-name').val()
-        Event.setCookie('boat-game-username', loginName)
+        const loginEmail = $('#input-login-email').val()
+        localStorage.setItem(Configure.LOCAL_STORAGE_NAME, loginName)
+        localStorage.setItem(Configure.LOCAL_STORAGE_EMAIL, loginEmail)
         registerUser(loginName)
         userData.name = loginName
+        userData.email = userEmail
         loginDone = true
       }
     })
@@ -116,7 +122,7 @@ function checkLogin() {
 }
 
 // API
-async function registerUser(name) {
+async function registerUser(name, email) {
   console.log(`registerUser starting...`)
 
   await userRequest({
@@ -124,6 +130,7 @@ async function registerUser(name) {
     url: 'register',
     data: {
       name,
+      email,
     },
   }).then(function (response) {
     console.log(response)

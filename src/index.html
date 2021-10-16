@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="/static/css/reset.min.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Acme&family=Roboto:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Acme&family=Roboto:wght@500;700&family=Lato:wght@700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -70,14 +70,30 @@
         </div>
         <div class="login-panel">
           <div class="wrap">
-            <input
-              type="text"
-              name="名稱"
-              id="input-login-name"
-              class="input-login-name"
-              placeholder="Your name"
-            />
-            <button id="btn-login" class="btn-login">Login</button>
+            <form class="form">
+              <input
+                type="text"
+                name="名稱"
+                id="input-login-name"
+                class="input-login-name f-lato"
+                placeholder="Your name"
+              />
+              <input
+                type="email"
+                name="信箱"
+                id="input-login-email"
+                class="input-login-email f-lato"
+                placeholder="Your email"
+              />
+              <div class="btn-login-block">
+                <button id="btn-login" class="btn-login">
+                  <div class="img flex-center">
+                    <img src="./images/ui/login.png" alt="login" class="w-full" />
+                  </div>
+                </button>
+                <div class="shadow"></div>
+              </div>
+            </form>
           </div>
         </div>
         <h3 class="ui-score">0</h3>
