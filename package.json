@@ -58,6 +58,7 @@
     "gsap": "^3.6.1",
     "jquery": "^3.6.0",
     "keycode-js": "^3.1.0",
+    "lottie-web": "^5.7.14",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "raw-loader": "^4.0.2",
     "swiper": "^6.5.6",

@@ -2,15 +2,16 @@
 /* eslint-disable no-use-before-define */
 import gsap from 'gsap'
 import * as THREE from 'three'
-import { Maths, Event } from '@/utils/formula'
+import { Maths } from '@/utils/formula'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as dat from 'dat.gui'
-import $, { error } from 'jquery'
+import $ from 'jquery'
 import { CODE_A, CODE_ENTER, CODE_UP, CODE_C, CODE_F, CODE_ESCAPE } from 'keycode-js'
 import Configure from '@/utils/Configure'
 import axios from 'axios'
 import AudioManager from '@/js/main/AudioManager'
+import LottieManager from '@/js/main/LottieManager'
 
 const Colors = {
   red: 0xf25346,
