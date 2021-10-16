@@ -33,7 +33,7 @@
     .word {
       position: relative;
       padding-bottom: 4px;
-      font-weight: 700;
+      letter-spacing: 2px;
 
       &::after {
         @include independent();
@@ -329,7 +329,7 @@
 
     opacity: 0;
     pointer-events: none;
-    transition: 0.25s ease;
+    transition: 0.5s ease;
 
     &.active {
       opacity: 1;
@@ -467,19 +467,32 @@
 
       .title {
         width: 300px;
+        margin-bottom: 50px;
+      }
+
+      .character {
+        @include flex-center(column);
+
+        margin-bottom: 50px;
       }
 
       h3 {
-        font-size: 24px;
-        color: $color-yellow;
+        font-size: 28px;
         line-height: 2;
+        letter-spacing: 4px;
       }
 
-      h4 {
-        font-size: 18px;
-        color: $color-gray-1;
+      a {
+        font-size: 20px;
         line-height: 1.5;
-        border-bottom: 3px solid $color-gray-1;
+        letter-spacing: 3px;
+        text-decoration: none;
+        color: rgba($color: $color-gray-1, $alpha: 1);
+        transition: 0.25s ease;
+
+        &:hover {
+          color: rgba($color: $color-gray-1, $alpha: 0.75);
+        }
       }
     }
 
