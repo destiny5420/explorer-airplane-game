@@ -52,6 +52,7 @@ let mousePos = {
 }
 
 const audioManager = new AudioManager()
+const lottieManager = new LottieManager()
 let creditObjInstance = null
 let headObjInstance = null
 let prevMouseX = 0
@@ -1506,6 +1507,7 @@ function headObj() {
   const result = {
     open: function () {
       $('.head').addClass('active')
+      lottieManager.play(Configure.ANIM_CLIP_LOGO)
     },
     close: function () {
       $('.head').removeClass('active')

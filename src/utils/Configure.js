@@ -9,6 +9,9 @@ export default {
   AUDIO_FX_HIT: 'AUDIO_FX_HIT',
   AUDIO_BGM_01: 'AUDIO_BGM_01',
 
+  // === Lottie ===
+  ANIM_CLIP_LOGO: 'LOGO',
+
   // === Local Storage ===
   LOCAL_STORAGE_NAME: 'explorer_name',
   LOCAL_STORAGE_EMAIL: 'explorer_email',
