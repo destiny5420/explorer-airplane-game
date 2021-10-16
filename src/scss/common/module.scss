@@ -21,10 +21,11 @@ body {
   background: linear-gradient(#e4e0ba, #f7d9aa);
 }
 
-.webgl {
-  position: fixed;
-  top: 0;
-  left: 0;
+.webgl-container {
+  @include size(100%, 100vh);
+
+  z-index: 1;
+  position: relative;
   outline: none;
 }
 

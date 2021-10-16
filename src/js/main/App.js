@@ -53,6 +53,7 @@ let mousePos = {
 
 const audioManager = new AudioManager()
 let creditObjInstance = null
+let headObjInstance = null
 let prevMouseX = 0
 let game = null
 let scene = null
@@ -91,10 +92,6 @@ const userData = {
 // const gui = new dat.GUI()
 // const cameraFolder = gui.addFolder('Camera')
 // cameraFolder.open()
-
-function showMessage() {
-  $('.message').removeClass('active')
-}
 
 function checkLogin() {
   let userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
@@ -991,6 +988,8 @@ function onCameraTransitionComplete() {
   $('.webgl').on('mouseup', onMouseUpEvent)
   $('.webgl').on('touchend', onTouchEndEvent)
 
+  headObjInstance.open()
+
   gsap
     .timeline()
     .fromTo(
@@ -1318,7 +1317,7 @@ function onGameOver() {
   setEnergyBar(0)
   cameraMoveToResult()
   airplaneMoveToResult()
-  $('.message').removeClass('active')
+
   $('.energy-bar').removeClass('active')
 
   game.speed *= 0.99
@@ -1404,12 +1403,12 @@ function init() {
 
 function onMouseUpEvent() {
   console.log(`onMouseUpEvent`)
-  onGameStart()
+  // onGameStart()
 }
 
 function onTouchEndEvent() {
   console.log(`onTouchEndEvent`)
-  onGameStart()
+  // onGameStart()
 }
 
 function onGameStart() {
@@ -1422,6 +1421,7 @@ function onGameStart() {
       return
     }
 
+    headObjInstance.close()
     audioManager.play(Configure.AUDIO_FX_PLAY_BUTTON)
     audioManager.play(Configure.AUDIO_BGM_01)
     updateLeaderBoard()
@@ -1496,6 +1496,21 @@ function creditObj() {
   return result
 }
 
+function headObj() {
+  const result = {
+    open: function () {
+      $('.head').addClass('active')
+    },
+    close: function () {
+      $('.head').removeClass('active')
+    },
+  }
+
+  $('#btn-play').on('click', onGameStart)
+
+  return result
+}
+
 function audioObj() {
   let mute = false
   const audioSignEl = $('#audio-sign')
@@ -1538,6 +1553,7 @@ function App() {
   const self = this
 
   creditObjInstance = creditObj.call(self)
+  headObjInstance = headObj.call(self)
   self.audioObj = audioObj.call(self)
 
   loadingFlow()
