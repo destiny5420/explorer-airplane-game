@@ -130,33 +130,62 @@
     &.active {
       .wrap {
         transform: translateY(0);
+        opacity: 1;
       }
     }
 
     .wrap {
-      @include size(250px, 50px);
+      @include flex-center();
 
-      padding: 8px;
-      background-color: #fafafa;
-      border-radius: 15px;
-      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
+      opacity: 0;
       transition: 0.5s ease-out;
       transform: translateY(200px);
+    }
+
+    .battery-block {
+      position: relative;
+    }
+
+    .battery {
+      z-index: 1;
+      position: relative;
+    }
+
+    .battery-fx {
+      @include independent(2);
+      @include size(100%, auto);
+
+      top: 0;
+      left: 0;
+    }
+
+    .battery,
+    .battery-fx {
+      width: 75px;
+    }
+
+    .bar-container {
+      @include size(625px, 40px);
+
+      padding: 10px;
+      background-color: #fafafa;
+      border-radius: 35px;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
     }
 
     .inner {
       @include size(100%);
 
       overflow: hidden;
-      background-color: #737373;
-      border-radius: 8px;
+      background-color: #7878784a;
+      border-radius: 18px;
       transform-style: preserve-3d;
     }
 
     .bar {
       @include size(100%);
 
-      background-color: #6ee7b7;
+      background-color: $color-orange;
       transform: translateX(0);
     }
   }

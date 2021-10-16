@@ -404,6 +404,20 @@ const AirPlane = function () {
 function addEnergy() {
   game.energy += game.coinValue
   game.energy = Math.min(game.energy, game.maxEnergy)
+
+  gsap.fromTo(
+    '#battery-fx',
+    {
+      opacity: 1,
+      scale: 0.75,
+    },
+    {
+      opacity: 0,
+      scale: 2,
+      duration: 0.25,
+    },
+  )
+
   console.log(`AddEnergy / energy: ${game.energy}`)
 }
 
