@@ -90,34 +90,38 @@ const userData = {
 // const cameraFolder = gui.addFolder('Camera')
 // cameraFolder.open()
 
-function checkLogin() {
-  const userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
-  const userEmail = localStorage.getItem(Configure.LOCAL_STORAGE_EMAIL)
+function showMessage() {
+  $('.message').removeClass('active')
+}
 
-  if (userName) {
-    console.warn(`Already login! userName: ${userName} / userEmail: ${userEmail}`)
-    registerUser(userName)
-    userData.name = userName
-    userData.email = userEmail
-    loginDone = true
-  } else {
-    console.warn('show login panel')
+function checkLogin() {
+  let userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
+  let userEmail = localStorage.getItem(Configure.LOCAL_STORAGE_EMAIL)
+
+  // if don't login
+  if (!userName) {
     $('.login-panel').addClass('active')
 
-    $('#btn-login').on('click', function () {
+    $('#btn-login').on('click', function (e) {
+      e.preventDefault()
       if ($('#input-login-name').val()) {
         $('.login-panel').removeClass('active')
         $('#input-login-name').prop('disabled', true)
-        const loginName = $('#input-login-name').val()
-        const loginEmail = $('#input-login-email').val()
-        localStorage.setItem(Configure.LOCAL_STORAGE_NAME, loginName)
-        localStorage.setItem(Configure.LOCAL_STORAGE_EMAIL, loginEmail)
-        registerUser(loginName)
-        userData.name = loginName
+        userName = $('#input-login-name').val()
+        userEmail = $('#input-login-email').val()
+        localStorage.setItem(Configure.LOCAL_STORAGE_NAME, userName)
+        localStorage.setItem(Configure.LOCAL_STORAGE_EMAIL, userEmail)
+        registerUser(userName, userEmail)
+        userData.name = userName
         userData.email = userEmail
         loginDone = true
       }
     })
+  } else {
+    registerUser(userName, userEmail)
+    userData.name = userName
+    userData.email = userEmail
+    loginDone = true
   }
 }
 
@@ -983,8 +987,6 @@ function onCameraTransitionComplete() {
   $('.webgl').on('touchmove', onTouchMoveEvent)
   $('.webgl').on('mouseup', onMouseUpEvent)
   $('.webgl').on('touchend', onTouchEndEvent)
-
-  $('.message').removeClass('active')
 
   gsap
     .timeline()
