@@ -18,8 +18,6 @@ animClips[Configure.ANIM_CLIP_LOGO] = animHeadLogo
 function LottieManager() {}
 
 LottieManager.prototype.play = function (clipName) {
-  console.log(`LottieManager play / clipName: `, clipName)
-  console.log(animClips[clipName])
   if (animClips[clipName]) {
     animClips[clipName].play()
   }
