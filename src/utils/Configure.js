@@ -10,6 +10,6 @@ export default {
   AUDIO_BGM_01: 'AUDIO_BGM_01',
 
   // === Local Storage ===
-  LOCAL_STORATE_NAME: 'explorer_name',
-  LOCAL_STORATE_EMAIL: 'explorer_email',
+  LOCAL_STORAGE_NAME: 'explorer_name',
+  LOCAL_STORAGE_EMAIL: 'explorer_email',
 }

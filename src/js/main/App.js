@@ -111,6 +111,7 @@ function checkLogin() {
         $('#input-login-name').prop('disabled', true)
         userName = $('#input-login-name').val()
         userEmail = $('#input-login-email').val()
+
         localStorage.setItem(Configure.LOCAL_STORAGE_NAME, userName)
         localStorage.setItem(Configure.LOCAL_STORAGE_EMAIL, userEmail)
         registerUser(userName, userEmail)
@@ -168,7 +169,7 @@ async function updateScore(score) {
     method: 'post',
     url: '/update',
     data: {
-      name: userData.name,
+      email: userData.email,
       score,
     },
   })
