@@ -23,6 +23,7 @@
     bottom: 10px;
     left: 20px;
     font-weight: 700;
+    color: #646464;
 
     .anim {
       transform: translateY(50px);
@@ -32,6 +33,7 @@
     .word {
       position: relative;
       padding-bottom: 4px;
+      font-weight: 700;
 
       &::after {
         @include independent();
@@ -39,7 +41,7 @@
 
         bottom: 0;
         left: 0;
-        background-color: #404040;
+        background-color: #646464;
         transition: width 0.25s;
         content: '';
       }
@@ -331,7 +333,12 @@
 
     &.active {
       opacity: 1;
-      pointer-events: all;
+
+      .wrap {
+        .form {
+          pointer-events: all;
+        }
+      }
     }
 
     .wrap {
@@ -346,6 +353,7 @@
       .form {
         @include flex-center(column);
 
+        pointer-events: none;
         width: 100%;
         align-items: stretch;
       }
@@ -417,10 +425,10 @@
 }
 
 .credit-panel {
-  @include independent(15);
+  @include independent($z-credit);
   @include size(100%);
+  @include flex-center();
 
-  background-color: #374151;
   opacity: 0;
   pointer-events: none;
 
@@ -430,28 +438,88 @@
   }
 
   .wrap {
-    @include flex-center();
-    @include size(100%);
+    @include size(95%);
 
-    flex-direction: column;
+    max-width: 1460px;
+    max-height: 725px;
+    position: relative;
 
-    h2 {
-      font-size: 36px;
-      color: $color-white;
-      line-height: 2;
+    &::after {
+      @include independent();
+      @include size(100%);
+
+      top: 0;
+      left: 0;
+      background-position: center center;
+      background-size: cover;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 50px;
+      content: '';
     }
 
-    h3 {
-      font-size: 24px;
-      color: $color-yellow;
-      line-height: 2;
+    .content {
+      @include flex-center();
+
+      z-index: 2;
+      height: 100%;
+      position: relative;
+      flex-direction: column;
+
+      .title {
+        width: 300px;
+      }
+
+      h3 {
+        font-size: 24px;
+        color: $color-yellow;
+        line-height: 2;
+      }
+
+      h4 {
+        font-size: 18px;
+        color: $color-gray-1;
+        line-height: 1.5;
+        border-bottom: 3px solid $color-gray-1;
+      }
     }
 
-    h4 {
-      font-size: 18px;
-      color: $color-gray-1;
-      line-height: 1.5;
-      border-bottom: 3px solid $color-gray-1;
+    .btn-close {
+      @include independent(2);
+      @include size(35px);
+
+      top: 40px;
+      right: 40px;
+      cursor: pointer;
+
+      &:hover {
+        &::after,
+        &::before {
+          background-color: rgba($color: #404040, $alpha: 1);
+        }
+      }
+
+      &::after,
+      &::before {
+        @include independent();
+
+        top: 50%;
+        left: 50%;
+        background-color: rgba($color: #404040, $alpha: 0.7);
+        transition: 0.25s ease;
+        content: '';
+      }
+
+      &::after {
+        width: 100%;
+        height: 3px;
+        transform: translate(-50%, -50%) rotateZ(45deg);
+      }
+
+      &::before {
+        width: 100%;
+        height: 3px;
+        transform: translate(-50%, -50%) rotateZ(135deg);
+      }
     }
   }
 }

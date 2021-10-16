@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import $, { error } from 'jquery'
-import { CODE_A, CODE_ENTER, CODE_UP, CODE_C, CODE_F } from 'keycode-js'
+import { CODE_A, CODE_ENTER, CODE_UP, CODE_C, CODE_F, CODE_ESCAPE } from 'keycode-js'
 import Configure from '@/utils/Configure'
 import axios from 'axios'
 import AudioManager from '@/js/main/AudioManager'
@@ -51,6 +51,7 @@ let mousePos = {
 }
 
 const audioManager = new AudioManager()
+let creditObjInstance = null
 let prevMouseX = 0
 let game = null
 let scene = null
@@ -1036,6 +1037,11 @@ function onKeyupEvent(evt) {
       //   startUpCameraPart1()
       // })
       break
+    case CODE_ESCAPE:
+      if (creditObjInstance.isOpen()) {
+        creditObjInstance.toggle()
+      }
+      break
     case CODE_UP:
       // createCoins()
       break
@@ -1460,6 +1466,7 @@ function creditObj() {
   let open = false
   const creditBtnEl = $('#credits')
   const creditPanelEl = $('#credit-panel')
+  const creditBtnCloseEl = $(creditPanelEl).find('.btn-close')
 
   const result = {
     toggle: function () {
@@ -1471,9 +1478,16 @@ function creditObj() {
         $(creditPanelEl).removeClass('open')
       }
     },
+    isOpen: function () {
+      return open
+    },
   }
 
   $(creditBtnEl).on('click', function () {
+    result.toggle()
+  })
+
+  $(creditBtnCloseEl).on('click', function () {
     result.toggle()
   })
 
@@ -1521,7 +1535,7 @@ function audioObj() {
 function App() {
   const self = this
 
-  self.creditObj = creditObj.call(self)
+  creditObjInstance = creditObj.call(self)
   self.audioObj = audioObj.call(self)
 
   loadingFlow()
