@@ -96,14 +96,14 @@ const userData = {
 function checkLogin() {
   let userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
   let userEmail = localStorage.getItem(Configure.LOCAL_STORAGE_EMAIL)
-
+  let isLogin = false
   // if don't login
   if (!userName) {
     $('.login-panel').addClass('active')
 
     $('#btn-login').on('click', function (e) {
       e.preventDefault()
-      if ($('#input-login-name').val()) {
+      if ($('#input-login-name').val() && $('#input-login-email')) {
         $('.login-panel').removeClass('active')
         $('#input-login-name').prop('disabled', true)
         userName = $('#input-login-name').val()
@@ -115,6 +115,8 @@ function checkLogin() {
         userData.name = userName
         userData.email = userEmail
         loginDone = true
+
+        headObjInstance.open()
       }
     })
   } else {
@@ -122,7 +124,10 @@ function checkLogin() {
     userData.name = userName
     userData.email = userEmail
     loginDone = true
+    isLogin = true
   }
+
+  return isLogin
 }
 
 // API
@@ -983,12 +988,13 @@ function startUpCameraPart3() {
 }
 
 function onCameraTransitionComplete() {
-  checkLogin()
+  if (checkLogin()) {
+    headObjInstance.open()
+  }
+
   $('.webgl').on('touchmove', onTouchMoveEvent)
   $('.webgl').on('mouseup', onMouseUpEvent)
   $('.webgl').on('touchend', onTouchEndEvent)
-
-  headObjInstance.open()
 
   gsap
     .timeline()
