@@ -5,21 +5,32 @@ import Configure from '@/utils/Configure'
 
 const animClips = {}
 
-const animHeadLogo = lottie.loadAnimation({
-  container: $('#head-logo')[0],
+const animHeadLogoText = lottie.loadAnimation({
+  container: $('#logo-text')[0],
   renderer: 'svg',
   loop: false,
   autoplay: false,
   path: '/static/lottie/type.json',
 })
 
-animClips[Configure.ANIM_CLIP_LOGO] = animHeadLogo
+const animHeadLogoCircle = lottie.loadAnimation({
+  container: $('#logo-circle')[0],
+  renderer: 'svg',
+  loop: true,
+  autoplay: true,
+  path: '/static/lottie/circle.json',
+})
+
+animClips[Configure.ANIM_CLIP_LOGO_TEXT] = animHeadLogoText
+animClips[Configure.ANIM_CLIP_LOGO_CIRCLE] = animHeadLogoCircle
 
 function LottieManager() {}
 
-LottieManager.prototype.play = function (clipName) {
+LottieManager.prototype.play = function (clipName, onComplete = null) {
   if (animClips[clipName]) {
+    // animClips[clipName].onComplete = onComplete
     animClips[clipName].play()
+    animClips[clipName].addEventListener('complete', onComplete)
   }
 }
 

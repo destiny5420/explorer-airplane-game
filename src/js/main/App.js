@@ -1522,15 +1522,57 @@ function creditObj() {
 }
 
 function headObj() {
+  let logoCircleAnim = null
+  let btnPlayAnim = null
+
   const result = {
     open: function () {
       $('.head').addClass('active')
-      lottieManager.play(Configure.ANIM_CLIP_LOGO)
+      lottieManager.play(Configure.ANIM_CLIP_LOGO_TEXT, function () {
+        btnPlayAnim.restart()
+      })
+
+      logoCircleAnim.play()
     },
     close: function () {
       $('.head').removeClass('active')
     },
   }
+
+  logoCircleAnim = gsap
+    .fromTo(
+      '.head #logo-circle',
+      {
+        opacity: 0,
+        scale: 0.75,
+      },
+      {
+        delay: 1.95,
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: 'back.out(3)',
+      },
+    )
+    .pause()
+
+  btnPlayAnim = gsap
+    .fromTo(
+      '.head .btn-play-block',
+      {
+        opacity: 0,
+        y: 10,
+        scale: 0.75,
+      },
+      {
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 0.55,
+        ease: 'back.out(2)',
+      },
+    )
+    .pause()
 
   $('#btn-play').on('click', onGameStart)
 
