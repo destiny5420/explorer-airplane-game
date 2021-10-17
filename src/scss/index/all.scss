@@ -364,6 +364,56 @@
       transform: translate(-50%, -50%);
     }
 
+    .button-block {
+      @include independent();
+      @include size(270px, 50px);
+
+      transform: translate(-50%, 50%);
+      bottom: 10%;
+      left: 50%;
+
+      .btn-again {
+        @include size(100%);
+
+        z-index: 2;
+        position: relative;
+        transform: translateY(-10px);
+        cursor: pointer;
+        transition: 0.25s ease;
+
+        &:hover {
+          transform: translateY(-3px);
+        }
+
+        .image {
+          @include independent();
+
+          width: 65%;
+          top: 20%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        .bottom {
+          @include size(100%);
+
+          background-color: #fff;
+          border: 2px solid $color-orange;
+          border-radius: 38px;
+        }
+      }
+
+      .shadow {
+        @include independent(1);
+        @include size(100%);
+
+        top: 0;
+        left: 0;
+        background-color: $color-orange;
+        border-radius: 38px;
+      }
+    }
+
     .list-wrap {
       @include flex-center(column);
       @include size(100%, 250px);
@@ -431,16 +481,6 @@
         position: relative;
         font-size: 22px;
         font-weight: 900;
-      }
-    }
-
-    @keyframes anim-shine {
-      0% {
-        transform: skewX(-30deg) translateX(-50px);
-      }
-
-      100% {
-        transform: skewX(-30deg) translateX(600px);
       }
     }
 

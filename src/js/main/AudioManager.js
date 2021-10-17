@@ -17,7 +17,7 @@ function createAudioElement(audioName, audioSrc, loop = false) {
 
 function init() {
   const self = this
-  createAudioElement.call(self, Configure.AUDIO_BGM_01, gameBGM01)
+  createAudioElement.call(self, Configure.AUDIO_BGM_01, gameBGM01, true)
 
   createAudioElement.call(self, Configure.AUDIO_FX_PLAY_BUTTON, audioFX_playButton)
   createAudioElement.call(self, Configure.AUDIO_FX_GET_ENERGY, audioFX_getEnergy)
@@ -27,9 +27,9 @@ function init() {
 const isPlaying = function (audioName) {
   const audioPlaying = !this[audioName].paused
 
-  if (audioPlaying) {
-    console.log(`Audio[${audioName}] is playing!`)
-  }
+  // if (audioPlaying) {
+  //   console.log(`Audio[${audioName}] is playing!`)
+  // }
 
   return audioPlaying
 }
@@ -49,6 +49,22 @@ AudioManager.prototype.play = function (audioName) {
     } else {
       this[audioName].currentTime = 0
     }
+  } else {
+    console.error(`Can't find specified audioName(${audioName})`)
+  }
+}
+
+AudioManager.prototype.mute = function (audioName) {
+  if (this[audioName]) {
+    this[audioName].volume = 0
+  } else {
+    console.error(`Can't find specified audioName(${audioName})`)
+  }
+}
+
+AudioManager.prototype.unmute = function (audioName) {
+  if (this[audioName]) {
+    this[audioName].volume = 1
   } else {
     console.error(`Can't find specified audioName(${audioName})`)
   }

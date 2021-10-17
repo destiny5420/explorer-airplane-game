@@ -56,6 +56,7 @@ const audioManager = new AudioManager()
 const lottieManager = new LottieManager()
 let creditObjInstance = null
 let headObjInstance = null
+let leaderBoardInstance = null
 let prevMouseX = 0
 let game = null
 let scene = null
@@ -108,7 +109,6 @@ function checkLogin() {
 
       if (!$.trim($('#input-login-name').val())) {
         $('.login-panel .error-name').addClass('active')
-        console.log(`name empty`)
         return
       }
       $('.login-panel .error-name').removeClass('active')
@@ -150,8 +150,6 @@ function checkLogin() {
 
 // API
 async function registerUser(name, email) {
-  console.log(`registerUser starting...`)
-
   await userRequest({
     method: 'post',
     url: 'register',
@@ -160,12 +158,10 @@ async function registerUser(name, email) {
       email,
     },
   }).then(function (response) {
-    console.log(response)
+    // console.log(response)
   })
 }
 async function updateLeaderBoard() {
-  console.log(`updateLeaderBoard starting...`)
-
   resetLeaderBoardData()
 
   await userRequest({
@@ -173,10 +169,8 @@ async function updateLeaderBoard() {
     url: '/find',
   })
     .then(function (response) {
-      console.log(`find / response: `, response)
       if (response.data.success) {
         leaderBoardData.topUsers = response.data.result
-        console.log(leaderBoardData.topUsers)
       }
     })
     .catch((err) => {
@@ -194,7 +188,7 @@ async function updateScore(score) {
     },
   })
     .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
     })
     .catch((err) => console.error(err))
 }
@@ -307,24 +301,9 @@ function showLeaderBoard(score) {
     return 0
   })
 
-  console.log(`tmpLeaderBoard: `, tmpLeaderBoard)
   tmpLeaderBoard.forEach((el, index) => {
     insertLeaderBoard(index + 1, el.name, el.score)
   })
-
-  // for (let i = 0; i < 3; i += 1) {
-  //   $(awardList[i])
-  //     .find('.rank')
-  //     .text(i + 1)
-
-  //   $(awardList[i])
-  //     .find('.name')
-  //     .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].name : '')
-
-  //   $(awardList[i])
-  //     .find('.score')
-  //     .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].score : '')
-  // }
 
   $('.leaderboard').addClass('active')
 }
@@ -498,15 +477,11 @@ function addEnergy() {
       duration: 0.25,
     },
   )
-
-  console.log(`AddEnergy / energy: ${game.energy}`)
 }
 
 function removeEnergy() {
   game.energy -= game.enemyValue
   game.energy = Math.max(0, game.energy)
-
-  console.error(`removeEnergy / energy: ${game.energy}`)
 }
 
 const Enemy = function () {
@@ -669,7 +644,6 @@ CoinManager.prototype.rotateCoins = function () {
 
     // if the airplane collides with the coin
     if (d < game.coinDistanceTolerance && !isGameOver()) {
-      console.log('The coin collide with airplane!!!')
       this.coinsPool.unshift(this.coinsInUse.splice(i, 1)[0])
       this.mesh.remove(coin.mesh)
       particleManager.spawnParticles(coin.mesh.position.clone(), 5, '#24ff2c', 0.8)
@@ -1120,7 +1094,6 @@ function onKeyupEvent(evt) {
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
-      onGameOver()
       break
     case CODE_C:
       // startUpCameraPart1()
@@ -1359,7 +1332,6 @@ function onPlaying() {
     Math.floor(game.distance) % game.distanceForCoinsSpawn === 0 &&
     Math.floor(game.distance) > game.coinLastSpawn
   ) {
-    console.warn(`spawn coins`)
     game.coinLastSpawn = Math.floor(game.distance)
     coinManager.spawnCoins()
   }
@@ -1369,7 +1341,6 @@ function onPlaying() {
     Math.floor(game.distance) % game.distanceForEnemySpawn === 0 &&
     Math.floor(game.distance) > game.enemyLastSpawn
   ) {
-    console.warn(`spawn enemy`)
     game.enemyLastSpawn = Math.floor(game.distance)
     enemyManager.spawnEnemy()
   }
@@ -1379,7 +1350,6 @@ function onPlaying() {
     Math.floor(game.distance) % game.distanceForSpeedUpdate === 0 &&
     Math.floor(game.distance) > game.speedLastUpdate
   ) {
-    console.warn(`update game speed`)
     game.speedLastUpdate = Math.floor(game.distance)
     game.targetBaseSpeed += game.incrementSpeedByTime * deltaTime
   }
@@ -1390,7 +1360,6 @@ function onPlaying() {
   ) {
     game.levelLastUpdate = Math.floor(game.distance)
     game.level += 1
-    console.error(game.level)
 
     game.targetBaseSpeed += (game.incrementSpeedByLevel * game.level) / 10
   }
@@ -1647,6 +1616,14 @@ function headObj() {
   return result
 }
 
+function leaderBoardObj() {
+  const result = {}
+
+  $('#btn-again').on('click', onGameStart)
+
+  return result
+}
+
 function audioObj() {
   let mute = false
   const audioSignEl = $('#audio-sign')
@@ -1669,9 +1646,18 @@ function audioObj() {
       if (mute) {
         $(audioSignMuteEl).addClass('active')
         $(audioSignUnMuteEl).removeClass('active')
+        audioManager.mute(Configure.AUDIO_FX_PLAY_BUTTON)
+        audioManager.mute(Configure.AUDIO_FX_GET_ENERGY)
+        audioManager.mute(Configure.AUDIO_FX_HIT)
+        audioManager.mute(Configure.AUDIO_BGM_01)
       } else {
         $(audioSignMuteEl).removeClass('active')
         $(audioSignUnMuteEl).addClass('active')
+
+        audioManager.unmute(Configure.AUDIO_FX_PLAY_BUTTON)
+        audioManager.unmute(Configure.AUDIO_FX_GET_ENERGY)
+        audioManager.unmute(Configure.AUDIO_FX_HIT)
+        audioManager.unmute(Configure.AUDIO_BGM_01)
       }
     },
   }
@@ -1690,6 +1676,7 @@ function App() {
 
   creditObjInstance = creditObj.call(self)
   headObjInstance = headObj.call(self)
+  leaderBoardInstance = leaderBoardObj.call(self)
   self.audioObj = audioObj.call(self)
 
   loadingFlow()
