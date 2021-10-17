@@ -212,7 +212,9 @@ function insertLeaderBoard(rank = 99, name = 'null', score = 0) {
   // === award ===
   const awardEl = document.createElement('div')
   $(awardEl).addClass('award text-center f-lato')
-  $(awardEl).text('AWARD')
+  if (rank > 0 && rank <= 3) {
+    $(awardEl).text('AWARD')
+  }
 
   // === rank ===
   const rankEl = document.createElement('div')
@@ -1118,7 +1120,7 @@ function onKeyupEvent(evt) {
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
-      // ambientLight.intensity = 2
+      onGameOver()
       break
     case CODE_C:
       // startUpCameraPart1()

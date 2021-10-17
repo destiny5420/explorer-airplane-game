@@ -312,7 +312,7 @@
 
       .wrap {
         opacity: 1;
-        transition: 0.25s ease;
+        transition: 0.75s ease;
       }
 
       .list-1 {
@@ -345,6 +345,7 @@
 
       width: 100%;
       max-width: 600px;
+      position: relative;
       justify-content: flex-start;
       padding: 90px 20px 140px;
       margin: 0 auto;
@@ -357,19 +358,15 @@
     .title {
       @include independent();
 
+      width: 90%;
       top: 0%;
       left: 50%;
-      padding: 15px 50px;
-      font-size: 32px;
-      background-color: #737373;
-      border: 5px solid #404040;
-      border-radius: 10px;
       transform: translate(-50%, -50%);
     }
 
     .list-wrap {
       @include flex-center(column);
-      @include size(100%, 210px);
+      @include size(100%, 250px);
 
       justify-content: flex-start;
       overflow-y: scroll;
@@ -380,18 +377,23 @@
       @include flex-center();
       @include size(100%, 60px);
 
+      min-height: 60px;
       position: relative;
       justify-content: space-between;
+      overflow: hidden;
       padding: 15px 40px;
       margin: 5px 0;
       font-size: 24px;
       color: #646464;
-      background-color: #fff;
+      background-color: transparent;
       border-radius: 10px;
       letter-spacing: 1px;
+      transform-style: preserve-3d;
 
       .award {
+        z-index: 1;
         width: 20%;
+        position: relative;
         font-size: 22px;
         color: $color-orange;
         font-weight: 900;
@@ -400,7 +402,9 @@
       .rank {
         @include flex-center();
 
+        z-index: 1;
         width: 15%;
+        position: relative;
 
         .rankValue {
           @include size(38px);
@@ -414,22 +418,61 @@
       }
 
       .name {
+        z-index: 1;
         width: 45%;
+        position: relative;
         font-size: 22px;
         font-weight: 900;
       }
 
       .score {
+        z-index: 1;
         width: 20%;
+        position: relative;
         font-size: 22px;
         font-weight: 900;
       }
     }
 
-    .list-1 {
+    @keyframes anim-shine {
+      0% {
+        transform: skewX(-30deg) translateX(-50px);
+      }
+
+      100% {
+        transform: skewX(-30deg) translateX(600px);
+      }
+    }
+
+    .list-1,
+    .list-2,
+    .list-3 {
+      position: relative;
+      background-color: #cdcdcdbf;
       opacity: 0;
-      transform: translateY(20px);
+      box-shadow: 2px 2px 0 #81818140;
       transition: 0.25s ease;
+      transform: translateY(20px);
+
+      &::after {
+        @include independent(2);
+        @include size(35px, 100%);
+
+        top: 0;
+        left: 0;
+        background-color: #fff;
+        content: '';
+        transform: skewX(-25deg);
+      }
+    }
+
+    .list-1 {
+      border: 3px solid #f3d205;
+
+      &::after {
+        animation: anim-shine 8s -1.5s forwards linear infinite;
+        background-color: #ffffff8f;
+      }
 
       .rank {
         .rankValue {
@@ -440,9 +483,10 @@
     }
 
     .list-2 {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.25s ease;
+      &::after {
+        background-color: #ffffff2b;
+        animation: anim-shine 8s -0.85s forwards linear infinite;
+      }
 
       .rank {
         .rankValue {
@@ -453,9 +497,10 @@
     }
 
     .list-3 {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.25s ease;
+      &::after {
+        background-color: transparent;
+        animation: anim-shine 8s -0.1s forwards linear infinite;
+      }
 
       .rank {
         .rankValue {
