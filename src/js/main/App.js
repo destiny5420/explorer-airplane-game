@@ -13,6 +13,7 @@ import Configure from '@/utils/Configure'
 import axios from 'axios'
 import AudioManager from '@/js/main/AudioManager'
 import LottieManager from '@/js/main/LottieManager'
+import ScreenShake from '@/js/main/ScreenShake'
 
 const Colors = {
   red: 0xf25346,
@@ -54,6 +55,12 @@ let mousePos = {
 
 const audioManager = new AudioManager()
 const lottieManager = new LottieManager()
+let screenShake = ScreenShake()
+const shakeValue = {
+  x: 2,
+  y: 2,
+  z: 2,
+}
 let creditObjInstance = null
 let headObjInstance = null
 let leaderBoardInstance = null
@@ -562,7 +569,7 @@ EnemyManager.prototype.rotateEnemy = function () {
       this.mesh.remove(enemy.mesh)
 
       i -= 1
-
+      screenShake.shake(camera, new THREE.Vector3(shakeValue.x, shakeValue.y, shakeValue.z), 300)
       audioManager.play(Configure.AUDIO_FX_HIT)
     } else if (enemy.angle > Math.PI) {
       enemyPool.unshift(this.enemiesInUse.splice(i, 1)[0])
@@ -1094,6 +1101,7 @@ function onKeyupEvent(evt) {
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
+      screenShake.shake(camera, new THREE.Vector3(shakeValue.x, shakeValue.y, shakeValue.z), 300)
       break
     case CODE_C:
       // startUpCameraPart1()
@@ -1432,6 +1440,8 @@ function update() {
   }
   // coinManager.rotateCoins()
   enemyManager.rotateEnemy()
+
+  screenShake.update(camera)
 
   renderer.render(scene, camera)
   requestAnimationFrame(update)
