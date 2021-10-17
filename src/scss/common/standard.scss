@@ -9,18 +9,18 @@
 
 /* track */
 ::-webkit-scrollbar-track {
-  background: rgb(25, 25, 25);
+  background: transparent;
 }
 
 /* handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #ebc8b2;
   border-radius: 20px;
 }
 
 /* handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #d1b19e;
 }
 
 // ===== Light-Box =====

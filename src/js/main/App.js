@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-use-before-define */
 import gsap from 'gsap'
@@ -104,7 +105,23 @@ function checkLogin() {
 
     $('#btn-login').on('click', function (e) {
       e.preventDefault()
-      if ($('#input-login-name').val() && $('#input-login-email')) {
+
+      if (!$.trim($('#input-login-name').val())) {
+        $('.login-panel .error-name').addClass('active')
+        console.log(`name empty`)
+        return
+      }
+      $('.login-panel .error-name').removeClass('active')
+
+      const regexp = new RegExp(/@+backer-founder/)
+      const validationEmail = regexp.test($('#input-login-email').val())
+      if (!validationEmail || !$('#input-login-email').val()) {
+        $('.login-panel .error-email').addClass('active')
+        return
+      }
+      $('.login-panel .error-email').removeClass('active')
+
+      if ($('#input-login-name').val()) {
         $('.login-panel').removeClass('active')
         $('#input-login-name').prop('disabled', true)
         userName = $('#input-login-name').val()
@@ -182,6 +199,59 @@ async function updateScore(score) {
     .catch((err) => console.error(err))
 }
 
+function insertLeaderBoard(rank = 99, name = 'null', score = 0) {
+  const root = $('.list-wrap')
+
+  const element = document.createElement('div')
+  $(element).addClass('list')
+  $(element).addClass('award-list')
+  if (rank > 0 && rank <= 3) {
+    $(element).addClass(`list-${rank}`)
+  }
+
+  // === award ===
+  const awardEl = document.createElement('div')
+  $(awardEl).addClass('award text-center f-lato')
+  $(awardEl).text('AWARD')
+
+  // === rank ===
+  const rankEl = document.createElement('div')
+  $(rankEl).addClass('rank text-center f-lato')
+
+  const rankValueEl = document.createElement('p')
+  $(rankValueEl).addClass('rankValue')
+  $(rankValueEl).text(rank)
+
+  $(rankEl).append(rankValueEl)
+
+  // === name ===
+  const nameEl = document.createElement('div')
+  $(nameEl).addClass('name text-center f-lato')
+
+  const nameValueEl = document.createElement('p')
+  $(nameValueEl).addClass('nameValue')
+  $(nameValueEl).text(name)
+
+  $(nameEl).append(nameValueEl)
+
+  // === score ===
+  const scoreEl = document.createElement('div')
+  $(scoreEl).addClass('score text-center f-lato')
+
+  const scoreValueEl = document.createElement('p')
+  $(scoreValueEl).addClass('scoreValue')
+  $(scoreValueEl).text(score)
+
+  $(scoreEl).append(scoreValueEl)
+
+  // === root append ===
+  $(element).append(awardEl)
+  $(element).append(rankEl)
+  $(element).append(nameEl)
+  $(element).append(scoreEl)
+  $(root).append(element)
+}
+
 function showLeaderBoard(score) {
   const awardList = $('.award-list')
 
@@ -235,19 +305,24 @@ function showLeaderBoard(score) {
     return 0
   })
 
-  for (let i = 0; i < 3; i += 1) {
-    $(awardList[i])
-      .find('.rank')
-      .text(i + 1)
+  console.log(`tmpLeaderBoard: `, tmpLeaderBoard)
+  tmpLeaderBoard.forEach((el, index) => {
+    insertLeaderBoard(index + 1, el.name, el.score)
+  })
 
-    $(awardList[i])
-      .find('.name')
-      .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].name : '')
+  // for (let i = 0; i < 3; i += 1) {
+  //   $(awardList[i])
+  //     .find('.rank')
+  //     .text(i + 1)
 
-    $(awardList[i])
-      .find('.score')
-      .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].score : '')
-  }
+  //   $(awardList[i])
+  //     .find('.name')
+  //     .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].name : '')
+
+  //   $(awardList[i])
+  //     .find('.score')
+  //     .text(tmpLeaderBoard[i] ? tmpLeaderBoard[i].score : '')
+  // }
 
   $('.leaderboard').addClass('active')
 }
@@ -776,16 +851,7 @@ const cameraMoveToPlaying = function () {
 }
 
 function resetLeaderboard() {
-  $('.award-list').each(function (index, el) {
-    $(el).find('.rank').text('')
-    $(el).find('.name').text('')
-    $(el).find('.score').text('')
-  })
-
-  const user = $('.user-list')
-  $(user).find('.rank').text('')
-  $(user).find('.name').text('')
-  $(user).find('.score').text('')
+  $('.list-wrap').empty()
 
   $('.leaderboard').removeClass('active')
 }

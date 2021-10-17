@@ -308,6 +308,8 @@
     transform: translate(0%, -50%);
 
     &.active {
+      pointer-events: all;
+
       .wrap {
         opacity: 1;
         transition: 0.25s ease;
@@ -344,11 +346,10 @@
       width: 100%;
       max-width: 600px;
       justify-content: flex-start;
-      padding: 20px;
-      padding-top: 50px;
+      padding: 90px 20px 140px;
       margin: 0 auto;
       background-color: rgba($color: #e7e5e4, $alpha: 0.5);
-      border-radius: 15px;
+      border-radius: 50px;
       opacity: 0;
       transition: 0.15s ease;
     }
@@ -368,37 +369,60 @@
 
     .list-wrap {
       @include flex-center(column);
-      @include size(100%, 100%);
+      @include size(100%, 210px);
 
       justify-content: flex-start;
+      overflow-y: scroll;
+      padding-right: 10px;
     }
 
     .list {
       @include flex-center();
-      @include size(100%, 12.5%);
+      @include size(100%, 60px);
 
       position: relative;
       justify-content: space-between;
-      padding: 15px 20px;
-      margin: 1% 0;
+      padding: 15px 40px;
+      margin: 5px 0;
       font-size: 24px;
+      color: #646464;
       background-color: #fff;
       border-radius: 10px;
+      letter-spacing: 1px;
 
       .award {
-        width: 15%;
+        width: 20%;
+        font-size: 22px;
+        color: $color-orange;
+        font-weight: 900;
       }
 
       .rank {
-        width: 20%;
+        @include flex-center();
+
+        width: 15%;
+
+        .rankValue {
+          @include size(38px);
+          @include flex-center();
+
+          font-size: 20px;
+          background-color: transparent;
+          border-radius: 50%;
+          font-weight: 900;
+        }
       }
 
       .name {
-        width: 30%;
+        width: 45%;
+        font-size: 22px;
+        font-weight: 900;
       }
 
       .score {
-        width: 35%;
+        width: 20%;
+        font-size: 22px;
+        font-weight: 900;
       }
     }
 
@@ -406,24 +430,39 @@
       opacity: 0;
       transform: translateY(20px);
       transition: 0.25s ease;
+
+      .rank {
+        .rankValue {
+          color: #fff;
+          background-color: #ffd136;
+        }
+      }
     }
 
     .list-2 {
       opacity: 0;
       transform: translateY(20px);
       transition: 0.25s ease;
+
+      .rank {
+        .rankValue {
+          color: #fff;
+          background-color: #bddce2;
+        }
+      }
     }
 
     .list-3 {
       opacity: 0;
       transform: translateY(20px);
       transition: 0.25s ease;
-    }
 
-    .list-4 {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.25s ease;
+      .rank {
+        .rankValue {
+          color: #fff;
+          background-color: #d38d2d;
+        }
+      }
     }
   }
 
@@ -462,11 +501,32 @@
         align-items: stretch;
       }
 
+      .input-block {
+        @include flex-center(column);
+
+        align-items: stretch;
+        margin-bottom: 22px;
+      }
+
+      .error-name,
+      .error-email {
+        display: none;
+        padding: 0 10px;
+        margin: 5px 0;
+        font-size: 14px;
+        text-align: left;
+        color: $color-orange;
+
+        &.active {
+          display: block;
+        }
+      }
+
       .input-login-name,
       .input-login-email {
         padding: 10px 20px;
-        margin-bottom: 22px;
         font-size: 22px;
+        color: #646464;
         background-color: rgba($color: #fff, $alpha: 0.7);
         border-color: transparent;
         border-radius: 16px;
