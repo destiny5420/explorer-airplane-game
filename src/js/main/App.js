@@ -1747,6 +1747,19 @@ function App() {
   leaderBoardInstance = leaderBoardObj.call(self)
   self.audioObj = audioObj.call(self)
 
+  let answer = null
+  $('#btn-reset-data').on('click', function () {
+    answer = window.confirm('Are you sure you want to clear all data?')
+
+    if (answer) {
+      localStorage.removeItem(Configure.LOCAL_STORAGE_NAME)
+      localStorage.removeItem(Configure.LOCAL_STORAGE_EMAIL)
+      window.location.reload()
+    } else {
+      console.log('Cancle')
+    }
+  })
+
   loadingFlow()
 }
 

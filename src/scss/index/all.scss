@@ -23,7 +23,7 @@
     bottom: 10px;
     left: 20px;
     font-weight: 700;
-    color: #646464;
+    color: #242424;
 
     .anim {
       transform: translateY(50px);
@@ -41,7 +41,7 @@
 
         bottom: 0;
         left: 0;
-        background-color: #646464;
+        background-color: #242424;
         transition: width 0.25s;
         content: '';
       }
@@ -62,8 +62,45 @@
     bottom: 10px;
 
     .anim {
+      @include flex-center();
+
       opacity: 0;
       transform: translateY(50px);
+
+      > :nth-child(n) {
+        margin: 0 5px;
+      }
+    }
+
+    .btn-reset {
+      position: relative;
+      padding: 0 0 4px;
+      font-size: 16px;
+      color: #242424;
+      background-color: transparent;
+      border: 0 solid transparent;
+      letter-spacing: 2px;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::after {
+        @include independent();
+        @include size(0%, 3px);
+
+        bottom: 0;
+        left: 0;
+        background-color: #242424;
+        transition: width 0.25s;
+        content: '';
+      }
+
+      &:hover {
+        &::after {
+          width: 100%;
+        }
+      }
     }
 
     .audio-sign {
