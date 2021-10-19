@@ -1150,7 +1150,6 @@ function onKeyupEvent(evt) {
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
-      screenShake.shake(camera, new THREE.Vector3(shakeValue.x, shakeValue.y, shakeValue.z), 300)
       break
     case CODE_C:
       // startUpCameraPart1()
