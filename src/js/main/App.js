@@ -14,6 +14,7 @@ import axios from 'axios'
 import AudioManager from '@/js/main/AudioManager'
 import LottieManager from '@/js/main/LottieManager'
 import ScreenShake from '@/js/main/ScreenShake'
+import { Color } from 'three'
 
 const Colors = {
   red: 0xf25346,
@@ -21,7 +22,9 @@ const Colors = {
   brown: 0x59332e,
   pink: 0xf5986e,
   brownDark: 0x23190f,
-  blue: 0x68c3c0,
+  gray: '#9d9d9d',
+  blue: '#185ADB',
+  fog: '#a2d2ff',
 }
 
 const cameraStartup = {
@@ -84,6 +87,9 @@ const particlesPool = []
 const particlesInUse = []
 let deltaTime = 0
 let coinMesh = null
+let airplaneMesh = null
+let airplaneMeshs = []
+let airplaneAxisMesh = null
 let loginDone = false
 const gltfLoader = new GLTFLoader()
 const enemyPool = []
@@ -396,76 +402,118 @@ const Sky = function () {
 const AirPlane = function () {
   this.mesh = new THREE.Object3D()
 
-  // Create the cabin
-  const geomCockpit = new THREE.BoxGeometry(60, 50, 50, 1, 1, 1)
-  const matCockpit = new THREE.MeshPhongMaterial({
-    color: Colors.red,
-    flatShading: THREE.FlatShading,
-  })
-  const cockpit = new THREE.Mesh(geomCockpit, matCockpit)
-  cockpit.castShadow = true
-  cockpit.receiveShadow = true
-  this.mesh.add(cockpit)
+  // // Create the cabin
+  // const geomCockpit = new THREE.BoxGeometry(60, 50, 50, 1, 1, 1)
+  // const matCockpit = new THREE.MeshPhongMaterial({
+  //   color: Colors.red,
+  //   flatShading: THREE.FlatShading,
+  // })
+  // const cockpit = new THREE.Mesh(geomCockpit, matCockpit)
+  // cockpit.castShadow = true
+  // cockpit.receiveShadow = true
+  // this.mesh.add(cockpit)
 
-  // Create the engine
-  const geomEngine = new THREE.BoxGeometry(20, 50, 50, 1, 1, 1)
-  const matEngine = new THREE.MeshPhongMaterial({
-    color: Colors.white,
-    flatShading: THREE.FlatShading,
-  })
-  const engine = new THREE.Mesh(geomEngine, matEngine)
-  engine.position.x = 40
-  engine.castShadow = true
-  engine.receiveShadow = true
-  this.mesh.add(engine)
+  // // Create the engine
+  // const geomEngine = new THREE.BoxGeometry(20, 50, 50, 1, 1, 1)
+  // const matEngine = new THREE.MeshPhongMaterial({
+  //   color: Colors.white,
+  //   flatShading: THREE.FlatShading,
+  // })
+  // const engine = new THREE.Mesh(geomEngine, matEngine)
+  // engine.position.x = 40
+  // engine.castShadow = true
+  // engine.receiveShadow = true
+  // this.mesh.add(engine)
 
-  // Create the tail
-  const geomTailPlane = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1)
-  const matTailPlane = new THREE.MeshPhongMaterial({
-    color: Colors.red,
-    flatShading: THREE.FlatShading,
-  })
-  const tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane)
-  tailPlane.position.set(-35, 25, 0)
-  tailPlane.castShadow = true
-  tailPlane.receiveShadow = true
-  this.mesh.add(tailPlane)
+  // // Create the tail
+  // const geomTailPlane = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1)
+  // const matTailPlane = new THREE.MeshPhongMaterial({
+  //   color: Colors.red,
+  //   flatShading: THREE.FlatShading,
+  // })
+  // const tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane)
+  // tailPlane.position.set(-35, 25, 0)
+  // tailPlane.castShadow = true
+  // tailPlane.receiveShadow = true
+  // this.mesh.add(tailPlane)
 
-  // Create the wing
-  const geomSideWing = new THREE.BoxGeometry(40, 8, 150, 1, 1, 1)
+  // // Create the wing
+  // const geomSideWing = new THREE.BoxGeometry(40, 8, 150, 1, 1, 1)
   const matSideWing = new THREE.MeshPhongMaterial({
-    color: Colors.red,
+    color: '#719FB0',
     flatShading: THREE.FlatShading,
   })
-  const sideWing = new THREE.Mesh(geomSideWing, matSideWing)
+  const sideWing = airplaneMeshs[0].clone()
+  sideWing.scale.set(4, 4, 4)
+  sideWing.material = matSideWing
+  // const sideWing = new THREE.Mesh(geomSideWing, matSideWing)
   sideWing.castShadow = true
   sideWing.receiveShadow = true
   this.mesh.add(sideWing)
 
+  const grayMaterial = new THREE.MeshPhongMaterial({
+    color: Colors.gray,
+    flatShading: THREE.FlatShading,
+  })
+  const grayObjs = airplaneMeshs[2].clone()
+  grayObjs.scale.set(4, 4, 4)
+  grayObjs.material = grayMaterial
+  grayObjs.castShadow = true
+  grayObjs.receiveShadow = false
+  this.mesh.add(grayObjs)
+
   // propeller
-  const geomPropeller = new THREE.BoxGeometry(20, 10, 10, 1, 1, 1)
+  const geomPropeller = new THREE.BoxGeometry(20, 8, 8, 1, 1, 1)
+  const geomPropellerTrail = new THREE.BoxGeometry(5, 3, 3, 1, 1, 1)
   const matPropeller = new THREE.MeshPhongMaterial({
     color: Colors.brown,
     flatShading: THREE.FlatShading,
   })
-  this.propeller = new THREE.Mesh(geomPropeller, matPropeller)
-  this.propeller.castShadow = true
-  this.propeller.receiveShadow = true
 
   // blades
   const geomBlade = new THREE.BoxGeometry(1, 100, 20, 1, 1, 1)
+  const geomBladeTrail = new THREE.BoxGeometry(1, 40, 5, 1, 1, 1)
   const matBlade = new THREE.MeshPhongMaterial({
     color: Colors.brownDark,
     flatShading: THREE.FlatShading,
   })
+
+  // propeller
+  this.propeller = new THREE.Mesh(geomPropeller, matPropeller)
+  this.propeller.castShadow = true
+  this.propeller.receiveShadow = true
 
   const blade = new THREE.Mesh(geomBlade, matBlade)
   blade.position.set(8, 0, 0)
   blade.castShadow = true
   blade.receiveShadow = true
   this.propeller.add(blade)
-  this.propeller.position.set(50, 0, 0)
-  this.mesh.add(this.propeller)
+  this.propeller.position.set(0, 0, 0)
+
+  const propellerBlock = new THREE.Group()
+  propellerBlock.add(this.propeller)
+  propellerBlock.position.set(10, 35, 0)
+  propellerBlock.rotation.z = Math.PI / 2
+  this.mesh.add(propellerBlock)
+
+  // propeller - Tail
+  this.propellerTail = new THREE.Mesh(geomPropellerTrail, matPropeller)
+  this.propellerTail.castShadow = true
+  this.propellerTail.receiveShadow = true
+
+  const blade1 = new THREE.Mesh(geomBladeTrail, matBlade)
+  blade1.position.set(8, 0, 0)
+  blade1.castShadow = true
+  blade1.receiveShadow = true
+  this.propellerTail.add(blade1)
+  this.propellerTail.position.set(0, 0, 0)
+
+  const propellerBlock1 = new THREE.Group()
+  propellerBlock1.add(this.propellerTail)
+  propellerBlock1.position.set(-60, 0, 5)
+  propellerBlock1.rotation.z = Math.PI / 2
+  propellerBlock1.rotation.x = Math.PI / 2
+  this.mesh.add(propellerBlock1)
 }
 
 function addEnergy() {
@@ -869,6 +917,7 @@ function updatePlane() {
   game.planeCollisionDisplacementZ += (0 - game.planeCollisionDisplacementZ) * deltaTime * 0.01
 
   airPlane.propeller.rotation.x += 0.3
+  airPlane.propellerTail.rotation.x += 0.3
 
   if (prevMouseX > mousePos.x) {
     gsap.timeline().to(airPlane.mesh.rotation, {
@@ -1006,7 +1055,7 @@ function startUpCameraPart2() {
         z: 0,
       },
       {
-        x: 9,
+        x: 18,
         y: 97,
         z: 0,
         duration: 3,
@@ -1231,7 +1280,7 @@ function createScene() {
 
   // scene
   scene = new THREE.Scene()
-  scene.fog = new THREE.Fog(0xf7d9aa, 100, 950)
+  scene.fog = new THREE.Fog(Colors.fog, 100, 1150)
 
   // camera
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 10000)
@@ -1426,6 +1475,7 @@ function update() {
   }
 
   airPlane.propeller.rotation.x += 0.3
+  airPlane.propellerTail.rotation.x += 0.3
   sea.mesh.rotation.z += 0.005
   sky.mesh.rotation.z += 0.001
 
@@ -1528,10 +1578,19 @@ function loadModel(url) {
 }
 
 async function loadingFlow() {
+  // load battery model
   const energyModel = await loadModel('/static/model/battery.glb')
-  // console.log(`energyModel: `, energyModel)
   coinMesh = energyModel.scene.children[0]
   coinMesh.scale.set(1, 1, 1)
+
+  // load airplane model
+  const airplaneModel = await loadModel('/static/model/airplane.glb')
+  console.log(airplaneModel)
+
+  for (let index = 0; index < airplaneModel.scene.children.length; index += 1) {
+    airplaneMeshs.push(airplaneModel.scene.children[index])
+    console.log(`${index} / mesh: `, airplaneModel.scene.children[index])
+  }
   init()
 }
 
