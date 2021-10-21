@@ -343,7 +343,7 @@ function showLeaderBoard(score) {
   $('.leaderboard .self-wrap .name').text(userData.name)
   $('.leaderboard .self-wrap .score').text(score)
 
-  $('.leaderboard').addClass('active')
+  leaderBoardInstance.showRoot()
 }
 
 function isGameOver() {
@@ -1724,12 +1724,62 @@ function headObj() {
 }
 
 function leaderBoardObj() {
+  const leaderBoardRoot = $('.leaderboard')
   const leaderBoardUserPanelEl = $('.leader-board-user-panel')
   const leaderBoardUserPanelMask = $('.leader-board-user-panel .mask')
   const leaderBoardUserPanelName = $('.leader-board-user-panel .name')
   const leaderBoardUserPanelEmail = $('.leader-board-user-panel .email')
   const leaderBoardUserPanelScore = $('.leader-board-user-panel .score')
+
   const result = {
+    showRoot: function () {
+      console.log(`leaderBoardObj showRoot!`)
+      $(leaderBoardRoot).addClass('active')
+
+      console.log($(`.leaderboard .list-wrap .list-1`))
+      console.log($(`.leaderboard .list-wrap .list-2`))
+      console.log($(`.leaderboard .list-wrap .list-3`))
+      gsap
+        .timeline()
+        .fromTo(
+          '.leaderboard .list-wrap .list-3',
+          {
+            opacity: 0,
+            x: -50,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+          },
+        )
+        .fromTo(
+          '.leaderboard .list-wrap .list-2',
+          {
+            opacity: 0,
+            x: -50,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+          },
+          '-=0.25',
+        )
+        .fromTo(
+          '.leaderboard .list-wrap .list-1',
+          {
+            opacity: 0,
+            x: -50,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+          },
+          '-=0.25',
+        )
+    },
     openUserPanel: function (name, score, email) {
       $(leaderBoardUserPanelName).text(name)
       $(leaderBoardUserPanelScore).text(score)
@@ -1744,7 +1794,6 @@ function leaderBoardObj() {
   $('#btn-again').on('click', onGameStart)
 
   $(leaderBoardUserPanelMask).on('click', () => {
-    console.log(`mask be clicked!`)
     result.closeUserPanel()
   })
 

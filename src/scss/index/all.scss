@@ -351,30 +351,6 @@
         opacity: 1;
         transition: 0.75s ease;
       }
-
-      .list-1 {
-        opacity: 1;
-        transform: translateY(0);
-        transition: 0.25s 0.5s ease;
-      }
-
-      .list-2 {
-        opacity: 1;
-        transform: translateY(0);
-        transition: 0.25s 0.75s ease;
-      }
-
-      .list-3 {
-        opacity: 1;
-        transform: translateY(0);
-        transition: 0.25s 1s ease;
-      }
-
-      .list-4 {
-        opacity: 1;
-        transform: translateY(0);
-        transition: 0.25s 1.25s ease;
-      }
     }
 
     .wrap {
@@ -528,10 +504,7 @@
     .list-3 {
       position: relative;
       background-color: #cdcdcdbf;
-      opacity: 0;
       box-shadow: 2px 2px 0 #81818140;
-      transition: 0.25s ease;
-      transform: translateY(20px);
 
       &::after {
         @include independent(2);
