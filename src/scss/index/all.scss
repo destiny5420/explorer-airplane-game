@@ -476,6 +476,7 @@
       border-radius: 10px;
       letter-spacing: 1px;
       transform-style: preserve-3d;
+      cursor: pointer;
 
       .award {
         z-index: 1;
@@ -507,7 +508,7 @@
 
       .name {
         z-index: 1;
-        width: 45%;
+        width: 35%;
         position: relative;
         font-size: 22px;
         font-weight: 900;
@@ -617,6 +618,7 @@
       padding-right: 10px;
 
       .list {
+        cursor: auto;
         margin: 0;
         background-color: #fff;
       }
@@ -865,6 +867,69 @@
         height: 3px;
         transform: translate(-50%, -50%) rotateZ(135deg);
       }
+    }
+  }
+}
+
+.leader-board-user-panel {
+  @include size(100%);
+  @include flex-center();
+
+  z-index: 50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .mask {
+    @include independent(0);
+    @include size(100%);
+
+    top: 0;
+    left: 0;
+    background-color: rgba(60, 60, 60, 0.25);
+  }
+
+  .wrap {
+    @include flex-center(column);
+
+    z-index: 1;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    padding: 20px 10px;
+    margin: 0 auto;
+    background-color: rgba($color: #fff, $alpha: 0.85);
+    border-radius: 10px;
+
+    .name {
+      font-size: 36px;
+      line-height: 2;
+    }
+
+    .email {
+      font-size: 22px;
+    }
+
+    .score {
+      font-size: 40px;
+      line-height: 2.5;
+    }
+
+    .name,
+    .email {
+      color: #646464;
+    }
+
+    .score {
+      color: $color-orange;
     }
   }
 }

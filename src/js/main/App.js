@@ -93,7 +93,7 @@ let loginDone = false
 const gltfLoader = new GLTFLoader()
 const enemyPool = []
 const leaderBoardData = {
-  topUsers: [],
+  users: [],
 }
 const userRequest = axios.create({
   baseURL: `${Configure.SERVER_API_BASE}/mongo`,
@@ -193,7 +193,7 @@ async function updateLeaderBoard() {
   })
     .then(function (response) {
       if (response.data.success) {
-        leaderBoardData.topUsers = response.data.result
+        leaderBoardData.users = response.data.result
       }
     })
     .catch((err) => {
@@ -216,7 +216,7 @@ async function updateScore(score) {
     .catch((err) => console.error(err))
 }
 
-function insertLeaderBoard(rank = 99, name = 'null', score = 0) {
+function insertLeaderBoard(rank = 99, name = 'null', score = 0, email = '') {
   const root = $('.list-wrap')
 
   const element = document.createElement('div')
@@ -268,6 +268,9 @@ function insertLeaderBoard(rank = 99, name = 'null', score = 0) {
   $(element).append(rankEl)
   $(element).append(nameEl)
   $(element).append(scoreEl)
+  $(element).on('click', function () {
+    leaderBoardInstance.openUserPanel(name, score, email)
+  })
   $(root).append(element)
 }
 
@@ -283,27 +286,30 @@ function showLeaderBoard(score) {
   const tmpLeaderBoard = []
   let userInLeaderBoard = false
 
-  // console.log(`topUsers: `, leaderBoardData.topUsers)
+  // console.log(`users: `, leaderBoardData.users)
   // console.log(`userData: `, userData)
 
-  leaderBoardData.topUsers.forEach((el) => {
+  leaderBoardData.users.forEach((el) => {
     if (el.email === userData.email) {
       userInLeaderBoard = true
       if (score > el.score) {
         tmpLeaderBoard.push({
           name: el.name,
           score: score,
+          email: el.email,
         })
       } else {
         tmpLeaderBoard.push({
           name: el.name,
           score: el.score,
+          email: el.email,
         })
       }
     } else {
       tmpLeaderBoard.push({
         name: el.name,
         score: el.score,
+        email: el.email,
       })
     }
   })
@@ -312,6 +318,7 @@ function showLeaderBoard(score) {
     tmpLeaderBoard.push({
       name: userData.name,
       score: score,
+      email: el.email,
     })
   }
 
@@ -329,7 +336,7 @@ function showLeaderBoard(score) {
 
   // setting all leader-board data
   tmpLeaderBoard.forEach((el, index) => {
-    insertLeaderBoard(index + 1, el.name, el.score)
+    insertLeaderBoard(index + 1, el.name, el.score, el.email)
   })
 
   // setting user leader-board data
@@ -585,7 +592,6 @@ const EnemyManager = function () {
 
 EnemyManager.prototype.spawnEnemy = function () {
   const enemyCount = game.level > 5 ? 5 : game.level
-  console.log(`enemyCount: ${enemyCount}`)
 
   for (let i = 0; i < enemyCount; i += 1) {
     let enemy
@@ -914,7 +920,7 @@ function resetLeaderboard() {
 }
 
 function resetLeaderBoardData() {
-  leaderBoardData.topUsers = []
+  leaderBoardData.users = []
   // leaderBoardData.player = {}
 }
 
@@ -1613,14 +1619,14 @@ async function loadingFlow() {
 
   for (let index = 0; index < airplaneModel.scene.children.length; index += 1) {
     airplaneMeshs.push(airplaneModel.scene.children[index])
-    console.log(`[airplaneModel] / ${index} / mesh: `, airplaneModel.scene.children[index])
+    // console.log(`[airplaneModel] / ${index} / mesh: `, airplaneModel.scene.children[index])
   }
 
   // load enemy model
   const enemyModel = await loadModel('/static/model/enemys.glb')
   for (let index = 0; index < enemyModel.scene.children.length; index += 1) {
     enemyMeshs.push(enemyModel.scene.children[index])
-    console.log(`[enemyModel] / ${index} / mesh: `, enemyModel.scene.children[index])
+    // console.log(`[enemyModel] / ${index} / mesh: `, enemyModel.scene.children[index])
   }
 
   init()
@@ -1718,9 +1724,29 @@ function headObj() {
 }
 
 function leaderBoardObj() {
-  const result = {}
+  const leaderBoardUserPanelEl = $('.leader-board-user-panel')
+  const leaderBoardUserPanelMask = $('.leader-board-user-panel .mask')
+  const leaderBoardUserPanelName = $('.leader-board-user-panel .name')
+  const leaderBoardUserPanelEmail = $('.leader-board-user-panel .email')
+  const leaderBoardUserPanelScore = $('.leader-board-user-panel .score')
+  const result = {
+    openUserPanel: function (name, score, email) {
+      $(leaderBoardUserPanelName).text(name)
+      $(leaderBoardUserPanelScore).text(score)
+      $(leaderBoardUserPanelEmail).text(email)
+      $(leaderBoardUserPanelEl).addClass('active')
+    },
+    closeUserPanel: function () {
+      $(leaderBoardUserPanelEl).removeClass('active')
+    },
+  }
 
   $('#btn-again').on('click', onGameStart)
+
+  $(leaderBoardUserPanelMask).on('click', () => {
+    console.log(`mask be clicked!`)
+    result.closeUserPanel()
+  })
 
   return result
 }
@@ -1786,8 +1812,6 @@ function eventObj() {
       console.log('Cancle')
     }
   })
-
-  // Hover effect - leader board
 }
 
 function App() {
