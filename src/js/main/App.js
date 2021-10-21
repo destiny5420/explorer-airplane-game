@@ -273,8 +273,11 @@ function showLeaderBoard(score) {
   const tmpLeaderBoard = []
   let userInLeaderBoard = false
 
+  console.log(`topUsers: `, leaderBoardData.topUsers)
+  console.log(`userData: `, userData)
+
   leaderBoardData.topUsers.forEach((el) => {
-    if (el.name === userData.name) {
+    if (el.email === userData.email) {
       userInLeaderBoard = true
       if (score > el.score) {
         tmpLeaderBoard.push({
