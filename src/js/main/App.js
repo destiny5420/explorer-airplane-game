@@ -65,6 +65,7 @@ const shakeValue = {
 }
 let creditObjInstance = null
 let headObjInstance = null
+let eventObjInstance = null
 let leaderBoardInstance = null
 let prevMouseX = 0
 let game = null
@@ -86,9 +87,8 @@ const particlesPool = []
 const particlesInUse = []
 let deltaTime = 0
 let coinMesh = null
-let airplaneMesh = null
 let airplaneMeshs = []
-let airplaneAxisMesh = null
+let enemyMeshs = []
 let loginDone = false
 const gltfLoader = new GLTFLoader()
 const enemyPool = []
@@ -554,7 +554,14 @@ const Enemy = function () {
     specular: 0xffffff,
     flatShading: THREE.FlatShading,
   })
-  this.mesh = new THREE.Mesh(geom, mat)
+
+  const meshIndex = Maths.getRandomInt(0, 3)
+  // console.log(`MeshIndex: `, meshIndex)
+  this.mesh = enemyMeshs[meshIndex].clone()
+  const scaleUnit = 8 + Math.random() * 5
+  this.mesh.scale.set(scaleUnit, scaleUnit, scaleUnit)
+  this.mesh.material = mat
+  // this.mesh = new THREE.Mesh(geom, mat)
   this.mesh.castShadow = true
   this.angle = 0
   this.dist = 0
@@ -566,7 +573,8 @@ const EnemyManager = function () {
 }
 
 EnemyManager.prototype.spawnEnemy = function () {
-  const enemyCount = game.level
+  const enemyCount = game.level > 5 ? 5 : game.level
+  console.log(`enemyCount: ${enemyCount}`)
 
   for (let i = 0; i < enemyCount; i += 1) {
     let enemy
@@ -1591,12 +1599,19 @@ async function loadingFlow() {
 
   // load airplane model
   const airplaneModel = await loadModel('/static/model/airplane.glb')
-  console.log(airplaneModel)
 
   for (let index = 0; index < airplaneModel.scene.children.length; index += 1) {
     airplaneMeshs.push(airplaneModel.scene.children[index])
-    console.log(`${index} / mesh: `, airplaneModel.scene.children[index])
+    console.log(`[airplaneModel] / ${index} / mesh: `, airplaneModel.scene.children[index])
   }
+
+  // load enemy model
+  const enemyModel = await loadModel('/static/model/enemys.glb')
+  for (let index = 0; index < enemyModel.scene.children.length; index += 1) {
+    enemyMeshs.push(enemyModel.scene.children[index])
+    console.log(`[enemyModel] / ${index} / mesh: `, enemyModel.scene.children[index])
+  }
+
   init()
 }
 
@@ -1746,14 +1761,8 @@ function audioObj() {
   return result
 }
 
-function App() {
-  const self = this
-
-  creditObjInstance = creditObj.call(self)
-  headObjInstance = headObj.call(self)
-  leaderBoardInstance = leaderBoardObj.call(self)
-  self.audioObj = audioObj.call(self)
-
+function eventObj() {
+  // Button event - reset
   let answer = null
   $('#btn-reset-data').on('click', function () {
     answer = window.confirm('Are you sure you want to clear all data?')
@@ -1766,6 +1775,16 @@ function App() {
       console.log('Cancle')
     }
   })
+}
+
+function App() {
+  const self = this
+
+  creditObjInstance = creditObj.call(self)
+  headObjInstance = headObj.call(self)
+  leaderBoardInstance = leaderBoardObj.call(self)
+  self.audioObj = audioObj.call(self)
+  eventObjInstance = eventObj.call(self)
 
   loadingFlow()
 }
