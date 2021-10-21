@@ -14,7 +14,6 @@ import axios from 'axios'
 import AudioManager from '@/js/main/AudioManager'
 import LottieManager from '@/js/main/LottieManager'
 import ScreenShake from '@/js/main/ScreenShake'
-import { Color } from 'three'
 
 const Colors = {
   red: 0xf25346,
@@ -265,7 +264,7 @@ function showLeaderBoard(score) {
   const awardList = $('.award-list')
 
   $(awardList).each(function (index, el) {
-    $(el).find('.rank').text(0)
+    $(el).find('.rank').text('')
     $(el).find('.name').text('null')
     $(el).find('.score').text(0)
   })
@@ -273,8 +272,8 @@ function showLeaderBoard(score) {
   const tmpLeaderBoard = []
   let userInLeaderBoard = false
 
-  console.log(`topUsers: `, leaderBoardData.topUsers)
-  console.log(`userData: `, userData)
+  // console.log(`topUsers: `, leaderBoardData.topUsers)
+  // console.log(`userData: `, userData)
 
   leaderBoardData.topUsers.forEach((el) => {
     if (el.email === userData.email) {
@@ -317,9 +316,14 @@ function showLeaderBoard(score) {
     return 0
   })
 
+  // setting all leader-board data
   tmpLeaderBoard.forEach((el, index) => {
     insertLeaderBoard(index + 1, el.name, el.score)
   })
+
+  // setting user leader-board data
+  $('.leaderboard .self-wrap .name').text(userData.name)
+  $('.leaderboard .self-wrap .score').text(score)
 
   $('.leaderboard').addClass('active')
 }
