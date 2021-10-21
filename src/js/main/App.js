@@ -1196,6 +1196,10 @@ function onKeyupEvent(evt) {
       if (creditObjInstance.isOpen()) {
         creditObjInstance.toggle()
       }
+
+      if (leaderBoardInstance.getLeaderBoardUserPanelIsOpen()) {
+        leaderBoardInstance.closeUserPanel()
+      }
       break
     case CODE_UP:
       // createCoins()
@@ -1730,6 +1734,7 @@ function leaderBoardObj() {
   const leaderBoardUserPanelName = $('.leader-board-user-panel .name')
   const leaderBoardUserPanelEmail = $('.leader-board-user-panel .email')
   const leaderBoardUserPanelScore = $('.leader-board-user-panel .score')
+  let leaderBoardUserPanelIsOpen = false
 
   const result = {
     showRoot: function () {
@@ -1785,9 +1790,16 @@ function leaderBoardObj() {
       $(leaderBoardUserPanelScore).text(score)
       $(leaderBoardUserPanelEmail).text(email)
       $(leaderBoardUserPanelEl).addClass('active')
+
+      leaderBoardUserPanelIsOpen = true
     },
     closeUserPanel: function () {
       $(leaderBoardUserPanelEl).removeClass('active')
+
+      leaderBoardUserPanelIsOpen = false
+    },
+    getLeaderBoardUserPanelIsOpen: function () {
+      return leaderBoardUserPanelIsOpen
     },
   }
 
