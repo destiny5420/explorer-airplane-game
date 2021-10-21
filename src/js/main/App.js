@@ -107,6 +107,9 @@ const userData = {
 // const gui = new dat.GUI()
 // const cameraFolder = gui.addFolder('Camera')
 // cameraFolder.open()
+function setErrorInputName(text) {
+  $('.login-panel .error-name').text(text)
+}
 
 function checkLogin() {
   let userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
@@ -120,6 +123,14 @@ function checkLogin() {
       e.preventDefault()
 
       if (!$.trim($('#input-login-name').val())) {
+        setErrorInputName('PLEASE FILL OUT THIS FIELD.')
+        $('.login-panel .error-name').addClass('active')
+        return
+      }
+      $('.login-panel .error-name').removeClass('active')
+
+      if ($('#input-login-name').val().length > 10) {
+        setErrorInputName('NAME MUST BE LESS THAN 10 CHARACTERS.')
         $('.login-panel .error-name').addClass('active')
         return
       }
@@ -1775,6 +1786,8 @@ function eventObj() {
       console.log('Cancle')
     }
   })
+
+  // Hover effect - leader board
 }
 
 function App() {
