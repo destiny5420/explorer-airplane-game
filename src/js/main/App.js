@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-use-before-define */
@@ -90,6 +91,13 @@ let coinMesh = null
 let airplaneMeshs = []
 let enemyMeshs = []
 let loginDone = false
+const AIRPLANE_STATUS = {
+  NORMAL: 0,
+  SKILL_1: 1,
+}
+let airplaneStatus
+let skill_1_value = 0
+let skill_1_count_down_timer = 0
 const gltfLoader = new GLTFLoader()
 const enemyPool = []
 const leaderBoardData = {
@@ -107,6 +115,60 @@ const userData = {
 // const gui = new dat.GUI()
 // const cameraFolder = gui.addFolder('Camera')
 // cameraFolder.open()
+
+function animAirplaneToType1() {
+  gsap.fromTo(
+    airPlane.mesh.scale,
+    {
+      x: 0.5,
+      y: 0.5,
+      z: 0.5,
+    },
+    {
+      x: 1,
+      y: 1,
+      z: 1,
+      yoyo: true,
+      repeat: 7,
+      duration: 0.15,
+      onStart: () => {
+        game.pause = true
+      },
+      onComplete: () => {
+        game.pause = false
+        airplaneStatus = AIRPLANE_STATUS.SKILL_1
+        skill_1_count_down_timer = 10
+      },
+    },
+  )
+}
+
+function animAirplaneToNormal() {
+  gsap.fromTo(
+    airPlane.mesh.scale,
+    {
+      x: 0.25,
+      y: 0.25,
+      z: 0.25,
+    },
+    {
+      x: 0.5,
+      y: 0.5,
+      z: 0.5,
+      yoyo: true,
+      repeat: 7,
+      duration: 0.15,
+      onStart: () => {
+        game.pause = true
+        airplaneStatus = AIRPLANE_STATUS.NORMAL
+      },
+      onComplete: () => {
+        game.pause = false
+      },
+    },
+  )
+}
+
 function setErrorInputName(text) {
   $('.login-panel .error-name').text(text)
 }
@@ -542,6 +604,15 @@ const AirPlane = function () {
 }
 
 function addEnergy() {
+  if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
+    game.batteryCollectionCount += 1
+
+    if (game.batteryCollectionCount >= 10) {
+      game.batteryCollectionCount = 0
+      animAirplaneToType1()
+    }
+  }
+
   game.energy += game.coinValue
   game.energy = Math.min(game.energy, game.maxEnergy)
 
@@ -560,7 +631,10 @@ function addEnergy() {
 }
 
 function removeEnergy() {
-  game.energy -= game.enemyValue
+  if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
+    game.energy -= game.enemyValue
+  }
+
   game.energy = Math.max(0, game.energy)
 }
 
@@ -638,9 +712,11 @@ EnemyManager.prototype.rotateEnemy = function () {
       // 1. play particle
       particleManager.spawnParticles(enemy.mesh.position.clone(), 15, Colors.red, 3)
 
-      // 2. plane collider event
-      game.planeCollisionSpeedY = (100 * diffPos.y) / d
-      game.planeCollisionSpeedZ = (100 * diffPos.z) / d
+      // 2. plane collider event\
+      if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
+        game.planeCollisionSpeedY = (100 * diffPos.y) / d
+        game.planeCollisionSpeedZ = (100 * diffPos.z) / d
+      }
 
       ambientLight.intensity = 2
       removeEnergy()
@@ -734,6 +810,7 @@ CoinManager.prototype.rotateCoins = function () {
       this.coinsPool.unshift(this.coinsInUse.splice(i, 1)[0])
       this.mesh.remove(coin.mesh)
       particleManager.spawnParticles(coin.mesh.position.clone(), 5, '#24ff2c', 0.8)
+
       addEnergy()
 
       audioManager.play(Configure.AUDIO_FX_GET_ENERGY)
@@ -991,7 +1068,10 @@ function setEnergyBar(value) {
 }
 
 function updateEnergy() {
-  game.energy -= game.speed * deltaTime * game.ratioSpeedEnergy
+  if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
+    game.energy -= game.speed * deltaTime * game.ratioSpeedEnergy
+  }
+
   game.energy = Math.max(0, game.energy)
 
   setEnergyBar(game.energy)
@@ -1179,18 +1259,16 @@ function onCameraTransitionComplete() {
 function onKeyupEvent(evt) {
   switch (evt.code) {
     case CODE_ENTER:
+      // game.pause = true
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
+      // animAirplaneToNormal()
       break
     case CODE_C:
-      // startUpCameraPart1()
+      // animAirplaneToType1()
       break
     case CODE_F:
-      // $('#loading').fadeOut(500, function () {
-      //   // onCameraTransitionComplete()
-      //   startUpCameraPart1()
-      // })
       break
     case CODE_ESCAPE:
       if (creditObjInstance.isOpen()) {
@@ -1220,6 +1298,8 @@ function resetGame() {
     incrementSpeedByLevel: 0.0000025,
     distanceForSpeedUpdate: 100,
     speedLastUpdate: 0,
+    pause: false,
+    batteryCollectionCount: 0,
 
     distance: 0,
     ratioSpeedDistance: 50,
@@ -1416,6 +1496,23 @@ function createParticles() {
   scene.add(particleManager.mesh)
 }
 
+function updateSkillSpeed() {
+  if (airplaneStatus === AIRPLANE_STATUS.SKILL_1) {
+    skill_1_value = 0.001
+
+    airplaneStatus = AIRPLANE_STATUS.SKILL_1
+    skill_1_count_down_timer -= deltaTime * 0.001
+    console.log(`skill_1_count_down_timer: ${skill_1_count_down_timer}`)
+
+    if (skill_1_count_down_timer <= 0) {
+      skill_1_count_down_timer = 0
+      animAirplaneToNormal()
+    }
+  } else if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
+    skill_1_value = 0
+  }
+}
+
 function onStart() {}
 
 function onPlaying() {
@@ -1459,10 +1556,13 @@ function onPlaying() {
   updatePlane()
   updateDistance()
   updateEnergy()
+  updateSkillSpeed()
 
   game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02
+  game.baseSpeed *= game.pause ? 0 : 1
   game.speed = game.baseSpeed * game.planeSpeed
   game.speed = Math.min(game.speed, 0.00125)
+  game.speed += skill_1_value
   // 0.0015
 }
 
@@ -1539,6 +1639,7 @@ function init() {
   game.status = 'start'
   game.endAnimation = true
 
+  airplaneStatus = AIRPLANE_STATUS.NORMAL
   createScene()
   createLights()
   createAirPlane()
