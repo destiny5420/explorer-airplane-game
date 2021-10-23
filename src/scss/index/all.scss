@@ -214,7 +214,7 @@
       @include size(100%);
 
       overflow: hidden;
-      background-color: #7878784a;
+      background-color: rgba($color: $color-energy-bar, $alpha: 0.25);
       border-radius: 18px;
       transform-style: preserve-3d;
     }
@@ -222,7 +222,7 @@
     .bar {
       @include size(100%);
 
-      background-color: $color-orange;
+      background-color: $color-energy-bar;
       transform: translateX(0);
     }
   }
@@ -460,7 +460,7 @@
         position: relative;
         padding: 5px 0;
         font-size: 22px;
-        color: $color-orange;
+        color: #ffa52b;
         font-weight: 900;
       }
 
