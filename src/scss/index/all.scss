@@ -20,10 +20,10 @@
     @include independent();
 
     pointer-events: all;
-    bottom: 10px;
-    left: 20px;
+    bottom: 25px;
+    left: 30px;
     font-weight: 700;
-    color: #242424;
+    color: #fff;
 
     .anim {
       transform: translateY(50px);
@@ -41,7 +41,7 @@
 
         bottom: 0;
         left: 0;
-        background-color: #242424;
+        background-color: #fff;
         transition: width 0.25s;
         content: '';
       }
@@ -58,8 +58,8 @@
     @include independent();
 
     pointer-events: all;
-    right: 20px;
-    bottom: 10px;
+    right: 30px;
+    bottom: 25px;
 
     .anim {
       @include flex-center();
@@ -76,7 +76,7 @@
       position: relative;
       padding: 0 0 4px;
       font-size: 16px;
-      color: #242424;
+      color: #fff;
       background-color: transparent;
       border: 0 solid transparent;
       letter-spacing: 2px;
@@ -91,7 +91,7 @@
 
         bottom: 0;
         left: 0;
-        background-color: #242424;
+        background-color: #fff;
         transition: width 0.25s;
         content: '';
       }
@@ -360,7 +360,7 @@
       max-width: 600px;
       position: relative;
       justify-content: flex-start;
-      padding: 90px 20px 140px;
+      padding: 100px 20px 140px;
       margin: 0 auto;
       background-color: rgba($color: #e7e5e4, $alpha: 0.5);
       border-radius: 50px;
@@ -375,6 +375,36 @@
       top: 0%;
       left: 50%;
       transform: translate(-50%, -50%);
+
+      .word {
+        @include independent(1);
+        top: 0%;
+        left: 53%;
+        transform: translate(-50%, -55%);
+        width: 95%;
+      }
+
+      .circle {
+        @include independent(0);
+        width: 30%;
+        top: 0%;
+        left: 12.5%;
+        transform: translate(-50%, -50%);
+
+        .anim {
+          animation: leaderboard-circle-anim 10s 0s forwards infinite linear;
+        }
+      }
+
+      @keyframes leaderboard-circle-anim {
+        0% {
+          transform: rotateZ(360deg);
+        }
+
+        100% {
+          transform: rotateZ(0deg);
+        }
+      }
     }
 
     .button-block {
@@ -503,7 +533,7 @@
     .list-2,
     .list-3 {
       position: relative;
-      background-color: #cdcdcdbf;
+      background-color: #fff;
       box-shadow: 2px 2px 0 #81818140;
 
       &::after {
@@ -522,8 +552,8 @@
       border: 3px solid #f3d205;
 
       &::after {
-        animation: anim-shine 8s -1.5s forwards linear infinite;
-        background-color: #ffffff8f;
+        animation: anim-shine 7s -1.5s forwards linear infinite;
+        background-color: #ffffffd3;
       }
 
       .rank {
@@ -536,8 +566,8 @@
 
     .list-2 {
       &::after {
-        background-color: #ffffff2b;
-        animation: anim-shine 8s -0.85s forwards linear infinite;
+        background-color: #ffffff7e;
+        animation: anim-shine 7s -0.85s forwards linear infinite;
       }
 
       .rank {
@@ -551,7 +581,7 @@
     .list-3 {
       &::after {
         background-color: transparent;
-        animation: anim-shine 8s -0.1s forwards linear infinite;
+        animation: anim-shine 7s -0.1s forwards linear infinite;
       }
 
       .rank {
@@ -569,9 +599,14 @@
       }
 
       .award {
-        color: #fff;
-        background: #464646;
+        background: transparent;
         border-radius: 20px;
+      }
+
+      .award,
+      .name,
+      .score {
+        color: #fff;
       }
 
       .rank {
@@ -593,7 +628,7 @@
       .list {
         cursor: auto;
         margin: 0;
-        background-color: #fff;
+        background-color: $color-orange;
       }
     }
   }

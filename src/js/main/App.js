@@ -91,6 +91,8 @@ let coinMesh = null
 let airplaneMeshs = []
 let enemyMeshs = []
 let loginDone = false
+const SKILL_1_DURATION_TIMER = 10
+const SKILL_1_TRIGGER_COUNT = 15
 const AIRPLANE_STATUS = {
   NORMAL: 0,
   SKILL_1: 1,
@@ -137,7 +139,7 @@ function animAirplaneToType1() {
       onComplete: () => {
         game.pause = false
         airplaneStatus = AIRPLANE_STATUS.SKILL_1
-        skill_1_count_down_timer = 10
+        skill_1_count_down_timer = SKILL_1_DURATION_TIMER
       },
     },
   )
@@ -607,7 +609,7 @@ function addEnergy() {
   if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
     game.batteryCollectionCount += 1
 
-    if (game.batteryCollectionCount >= 10) {
+    if (game.batteryCollectionCount >= SKILL_1_TRIGGER_COUNT) {
       game.batteryCollectionCount = 0
       animAirplaneToType1()
     }
@@ -1502,7 +1504,6 @@ function updateSkillSpeed() {
 
     airplaneStatus = AIRPLANE_STATUS.SKILL_1
     skill_1_count_down_timer -= deltaTime * 0.001
-    console.log(`skill_1_count_down_timer: ${skill_1_count_down_timer}`)
 
     if (skill_1_count_down_timer <= 0) {
       skill_1_count_down_timer = 0
