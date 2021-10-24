@@ -181,24 +181,98 @@
 
     .battery-block {
       position: relative;
+      margin-right: 20px;
+
+      @include size(75px);
     }
 
     .battery {
       z-index: 1;
       position: relative;
+
+      @include flex-center();
+
+      .circle-fx {
+        @include independent();
+        @include flex-center();
+
+        opacity: 0;
+        width: 150%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        > svg {
+          width: 100%;
+        }
+
+        .anim {
+          @include flex-center();
+          animation: anim-battery-circle-fx 0.5s 0s infinite linear forwards;
+        }
+
+        &.active {
+          opacity: 1;
+        }
+      }
+
+      @keyframes anim-battery-circle-fx {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: scale(2);
+        }
+      }
+
+      .skill-energy {
+        @include independent();
+        @include flex-center();
+
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .image {
+        @include independent();
+        width: 75%;
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .inner {
+        @include aspect-ratio(1, 1);
+
+        background-color: transparent;
+      }
     }
 
     .battery-fx {
       @include independent(2);
-      @include size(100%, auto);
 
       top: 0;
       left: 0;
-    }
 
-    .battery,
-    .battery-fx {
-      width: 75px;
+      .image {
+        @include independent();
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 75%;
+      }
+
+      .inner {
+        @include aspect-ratio(1, 1);
+        background-color: transparent;
+      }
     }
 
     .bar-container {

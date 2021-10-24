@@ -66,6 +66,7 @@ const shakeValue = {
 }
 let creditObjInstance = null
 let headObjInstance = null
+let energyBarInstance = null
 let eventObjInstance = null
 let leaderBoardInstance = null
 let prevMouseX = 0
@@ -92,7 +93,7 @@ let airplaneMeshs = []
 let enemyMeshs = []
 let loginDone = false
 const SKILL_1_DURATION_TIMER = 10
-const SKILL_1_TRIGGER_COUNT = 15
+const SKILL_1_TRIGGER_COUNT = 20
 const AIRPLANE_STATUS = {
   NORMAL: 0,
   SKILL_1: 1,
@@ -135,6 +136,7 @@ function animAirplaneToType1() {
       duration: 0.15,
       onStart: () => {
         game.pause = true
+        energyBarInstance.toggleSkillFx(true)
       },
       onComplete: () => {
         game.pause = false
@@ -163,6 +165,7 @@ function animAirplaneToNormal() {
       onStart: () => {
         game.pause = true
         airplaneStatus = AIRPLANE_STATUS.NORMAL
+        energyBarInstance.toggleSkillFx(false)
       },
       onComplete: () => {
         game.pause = false
@@ -608,6 +611,7 @@ const AirPlane = function () {
 function addEnergy() {
   if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
     game.batteryCollectionCount += 1
+    energyBarInstance.addSkillValue()
 
     if (game.batteryCollectionCount >= SKILL_1_TRIGGER_COUNT) {
       game.batteryCollectionCount = 0
@@ -626,8 +630,8 @@ function addEnergy() {
     },
     {
       opacity: 0,
-      scale: 2,
-      duration: 0.25,
+      scale: 4,
+      duration: 0.5,
     },
   )
 }
@@ -1074,6 +1078,7 @@ function updateEnergy() {
     game.energy -= game.speed * deltaTime * game.ratioSpeedEnergy
   }
 
+  game.energy = 100
   game.energy = Math.max(0, game.energy)
 
   setEnergyBar(game.energy)
@@ -1265,9 +1270,11 @@ function onKeyupEvent(evt) {
       // updateScore(Math.floor(game.distance))
       break
     case CODE_A:
+      energyBarInstance.addSkillValue()
       // animAirplaneToNormal()
       break
     case CODE_C:
+      energyBarInstance.setSkillValue(0)
       // animAirplaneToType1()
       break
     case CODE_F:
@@ -1502,11 +1509,13 @@ function updateSkillSpeed() {
   if (airplaneStatus === AIRPLANE_STATUS.SKILL_1) {
     skill_1_value = 0.001
 
-    airplaneStatus = AIRPLANE_STATUS.SKILL_1
     skill_1_count_down_timer -= deltaTime * 0.001
+
+    energyBarInstance.updateSkillValue(skill_1_count_down_timer)
 
     if (skill_1_count_down_timer <= 0) {
       skill_1_count_down_timer = 0
+      energyBarInstance.init()
       animAirplaneToNormal()
     }
   } else if (airplaneStatus === AIRPLANE_STATUS.NORMAL) {
@@ -1829,6 +1838,50 @@ function headObj() {
   return result
 }
 
+let batteryCollectionCount = 0
+let batteryCollectionBarValue = 0
+
+function energyBarObj() {
+  const batteryCircleFx = $('.energy-bar #battery-circle-fx')
+  const batteryCollectBar = $('#levelCircleStroke')
+  const svgDefaultValue = 751
+  const result = {
+    init: function () {
+      batteryCollectBar.attr('stroke-dashoffset', svgDefaultValue)
+      batteryCollectionCount = 0
+    },
+    addSkillValue: function () {
+      batteryCollectionCount += 1
+
+      batteryCollectionBarValue =
+        svgDefaultValue - (svgDefaultValue / SKILL_1_TRIGGER_COUNT) * batteryCollectionCount
+
+      this.setSkillValue(batteryCollectionBarValue)
+    },
+
+    updateSkillValue: function (value) {
+      const unit = svgDefaultValue / SKILL_1_DURATION_TIMER
+      batteryCollectionBarValue = svgDefaultValue - value * unit
+
+      this.setSkillValue(batteryCollectionBarValue)
+    },
+    setSkillValue: function (value) {
+      batteryCollectBar.attr('stroke-dashoffset', value)
+    },
+    toggleSkillFx: function (key) {
+      if (key) {
+        $(batteryCircleFx).addClass('active')
+      } else {
+        $(batteryCircleFx).removeClass('active')
+      }
+    },
+  }
+
+  result.init()
+
+  return result
+}
+
 function leaderBoardObj() {
   const leaderBoardRoot = $('.leaderboard')
   const leaderBoardUserPanelEl = $('.leader-board-user-panel')
@@ -1982,6 +2035,7 @@ function App() {
 
   creditObjInstance = creditObj.call(self)
   headObjInstance = headObj.call(self)
+  energyBarInstance = energyBarObj.call(self)
   leaderBoardInstance = leaderBoardObj.call(self)
   self.audioObj = audioObj.call(self)
   eventObjInstance = eventObj.call(self)

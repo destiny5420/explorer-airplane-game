@@ -122,16 +122,56 @@
         <h3 class="ui-score">0</h3>
         <div class="energy-bar">
           <div class="wrap">
-            <div class="battery-block">
-              <div id="battery-fx" class="battery-fx">
+            <div class="battery-block active">
+              <div id="battery-fx" class="battery-fx w-full">
                 <div class="image flex-center">
                   <img src="./images/ui/battery.png" alt="battery" class="w-full" />
                 </div>
+                <div class="inner w-full"></div>
               </div>
-              <div class="battery">
+              <div class="battery w-full">
+                <div id="battery-circle-fx" class="circle-fx">
+                  <div class="anim w-full">
+                    <svg viewBox="0 0 300 300">
+                      <circle
+                        r="100"
+                        cx="150"
+                        cy="150"
+                        fill="none"
+                        stroke="#fff"
+                        stroke-width="15px"
+                      ></circle>
+                    </svg>
+                  </div>
+                </div>
+                <div class="skill-energy">
+                  <svg class="level-circle" id="levelCircle" viewBox="0 0 300 300">
+                    <circle
+                      id="levelCircleBgr"
+                      r="120"
+                      cx="150"
+                      cy="150"
+                      fill="none"
+                      stroke="#fff"
+                      stroke-width="60px"
+                    ></circle>
+                    <circle
+                      id="levelCircleStroke"
+                      r="120"
+                      cx="150"
+                      cy="150"
+                      fill="none"
+                      #f25346=""
+                      stroke="#69cf5e"
+                      stroke-width="30px"
+                      stroke-dasharray="751"
+                    ></circle>
+                  </svg>
+                </div>
                 <div class="image flex-center">
                   <img src="./images/ui/battery.png" alt="battery" class="w-full" />
                 </div>
+                <div class="inner w-full"></div>
               </div>
             </div>
             <div class="bar-container">
