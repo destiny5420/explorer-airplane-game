@@ -93,7 +93,7 @@ let airplaneMeshs = []
 let enemyMeshs = []
 let loginDone = false
 const SKILL_1_DURATION_TIMER = 10
-const SKILL_1_TRIGGER_COUNT = 20
+const SKILL_1_TRIGGER_COUNT = 30
 const AIRPLANE_STATUS = {
   NORMAL: 0,
   SKILL_1: 1,
@@ -1590,7 +1590,6 @@ function onPlaying() {
 }
 
 function onGameOver() {
-  console.log(`onGameOver`)
   setEnergyBar(0)
   cameraMoveToResult()
   airplaneMoveToResult()
@@ -1602,7 +1601,6 @@ function onGameOver() {
 }
 
 function onGameOverUpdate() {
-  console.log(`onGameOverUpdate`)
   game.speed *= 0.99
   game.status = 'waitingReplay'
 }
@@ -1656,8 +1654,6 @@ function update() {
 }
 
 function init() {
-  console.log(`Init`)
-
   resetGame()
   game.status = 'start'
   game.endAnimation = true
@@ -1683,12 +1679,10 @@ function init() {
 }
 
 function onMouseUpEvent() {
-  console.log(`onMouseUpEvent`)
   // onGameStart()
 }
 
 function onTouchEndEvent() {
-  console.log(`onTouchEndEvent`)
   // onGameStart()
 }
 
@@ -1906,12 +1900,8 @@ function leaderBoardObj() {
 
   const result = {
     showRoot: function () {
-      console.log(`leaderBoardObj showRoot!`)
       $(leaderBoardRoot).addClass('active')
 
-      console.log($(`.leaderboard .list-wrap .list-1`))
-      console.log($(`.leaderboard .list-wrap .list-2`))
-      console.log($(`.leaderboard .list-wrap .list-3`))
       gsap
         .timeline()
         .fromTo(
@@ -2038,7 +2028,7 @@ function eventObj() {
       localStorage.removeItem(Configure.LOCAL_STORAGE_EMAIL)
       window.location.reload()
     } else {
-      console.log('Cancle')
+      // console.log('cancel')
     }
   })
 }
