@@ -1078,7 +1078,6 @@ function updateEnergy() {
     game.energy -= game.speed * deltaTime * game.ratioSpeedEnergy
   }
 
-  game.energy = 100
   game.energy = Math.max(0, game.energy)
 
   setEnergyBar(game.energy)
