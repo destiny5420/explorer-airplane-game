@@ -1260,6 +1260,20 @@ function onCameraTransitionComplete() {
       },
       '-=0.75',
     )
+    .fromTo(
+      '.mb-panel .anim',
+      {
+        y: 50,
+        opacity: 0,
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power1.out',
+      },
+      '-=0.75',
+    )
 }
 
 function onKeyupEvent(evt) {

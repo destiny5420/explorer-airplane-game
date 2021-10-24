@@ -146,6 +146,24 @@
     }
   }
 
+  .mb-panel {
+    @include independent();
+
+    font-weight: 100;
+    font-size: 14px;
+    color: #fff;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+
+    .anim {
+      @include flex-center();
+
+      opacity: 0;
+      transform: translateY(50px);
+    }
+  }
+
   .ui-score {
     @include independent(10);
 
@@ -160,7 +178,7 @@
   .energy-bar {
     @include independent(10);
 
-    bottom: 5%;
+    bottom: 7.5%;
     left: 50%;
     transform: translate(-50%, 0%);
 
