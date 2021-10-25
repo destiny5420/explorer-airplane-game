@@ -1659,6 +1659,8 @@ function init() {
   game.endAnimation = true
 
   airplaneStatus = AIRPLANE_STATUS.NORMAL
+  energyBarInstance.init()
+
   createScene()
   createLights()
   createAirPlane()
@@ -1700,7 +1702,7 @@ function onGameStart() {
     audioManager.play(Configure.AUDIO_FX_PLAY_BUTTON)
     audioManager.play(Configure.AUDIO_BGM_01)
     updateLeaderBoard()
-
+    energyBarInstance.init()
     resetGame()
     game.status = 'playing'
     $('.message').addClass('active')
