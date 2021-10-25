@@ -1608,10 +1608,13 @@ function onGameOverUpdate() {
 function onWaitingReplay() {
   // console.log(`onWaitingReplay`)
 }
-function update() {
-  newTime = new Date().getTime()
-  deltaTime = newTime - oldTime
-  oldTime = newTime
+
+let ticker
+function update(t) {
+  // console.log(`update / t: ${t}`)
+  // newTime = new Date().getTime()
+  // deltaTime = newTime - oldTime
+  // oldTime = newTime
 
   switch (game.status) {
     case 'start':
@@ -1650,7 +1653,7 @@ function update() {
   screenShake.update(camera)
 
   renderer.render(scene, camera)
-  requestAnimationFrame(update)
+  ticker = requestAnimationFrame(update)
 }
 
 function init() {
@@ -1673,7 +1676,7 @@ function init() {
   document.addEventListener('mousemove', onMouseMoveEvent, false)
   document.addEventListener('keyup', onKeyupEvent, false)
 
-  update()
+  ticker = requestAnimationFrame(update)
 
   $('#loading').fadeOut(500, function () {
     startUpCameraPart1()
@@ -2046,6 +2049,12 @@ function App() {
   eventObjInstance = eventObj.call(self)
 
   loadingFlow()
+
+  setInterval(function () {
+    newTime = new Date().getTime()
+    deltaTime = newTime - oldTime
+    oldTime = newTime
+  }, 12.5)
 }
 
 export default App
