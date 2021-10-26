@@ -1584,7 +1584,7 @@ function onPlaying() {
   game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02
   game.baseSpeed *= game.pause ? 0 : 1
   game.speed = game.baseSpeed * game.planeSpeed
-  game.speed = Math.min(game.speed, 0.00125)
+  game.speed = Math.min(game.speed, 0.00175)
   game.speed += skill_1_value
   // 0.0015
 }
@@ -2054,7 +2054,7 @@ function App() {
     newTime = new Date().getTime()
     deltaTime = newTime - oldTime
     oldTime = newTime
-  }, 13)
+  }, 13.5)
 }
 
 export default App
