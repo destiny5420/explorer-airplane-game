@@ -2054,7 +2054,7 @@ function App() {
     newTime = new Date().getTime()
     deltaTime = newTime - oldTime
     oldTime = newTime
-  }, 12.5)
+  }, 13)
 }
 
 export default App
