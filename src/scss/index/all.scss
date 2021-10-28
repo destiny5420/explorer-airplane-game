@@ -807,7 +807,7 @@
           z-index: 1;
           position: relative;
           background-color: #fff;
-          border: 3px solid #fe715e;
+          border: 3px solid $color-orange;
           border-radius: 38px;
           transition: 0.25s ease;
           cursor: pointer;
@@ -838,7 +838,7 @@
 
           top: 50%;
           left: 50%;
-          background-color: #fe715e;
+          background-color: $color-orange;
           border-radius: 38px;
           transform: translate(-50%, -50%);
         }
