@@ -269,18 +269,18 @@ async function updateLeaderBoard() {
 }
 
 async function updateScore(score) {
-  await userRequest({
-    method: 'post',
-    url: '/update',
-    data: {
-      email: userData.email,
-      score,
-    },
-  })
-    .then(function (response) {
-      // console.log(response.data)
-    })
-    .catch((err) => console.error(err))
+  // await userRequest({
+  //   method: 'post',
+  //   url: '/update',
+  //   data: {
+  //     email: userData.email,
+  //     score,
+  //   },
+  // })
+  //   .then(function (response) {
+  //     // console.log(response.data)
+  //   })
+  //   .catch((err) => console.error(err))
 }
 
 function insertLeaderBoard(rank = 99, name = 'null', score = 0, email = '') {
