@@ -203,7 +203,7 @@ function checkLogin() {
       }
       $('.login-panel .error-name').removeClass('active')
 
-      const regexp = new RegExp(/@+backer-founder/)
+      const regexp = new RegExp(/@/)
       const validationEmail = regexp.test($('#input-login-email').val())
       if (!validationEmail || !$('#input-login-email').val()) {
         $('.login-panel .error-email').addClass('active')
