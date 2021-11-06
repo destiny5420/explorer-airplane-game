@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config webpack.dev.js --open",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
-    "beta": "aws s3 sync ./dist s3://{host} --delete",
-    "deploy": "aws s3 sync ./dist s3://{host} --delete"
+    "deploy": "aws s3 sync ./dist s3://explorer.stackergames.org --delete --profile paper-hsiao"
   },
   "author": "",
   "license": "ISC",
@@ -51,15 +50,18 @@
     "webpack-merge": "^5.7.3"
   },
   "dependencies": {
-    "dat.gui": "^0.7.7",
-    "three": "^0.130.0",
-    "raw-loader": "^4.0.2",
     "animejs": "^3.2.1",
+    "axios": "^0.21.4",
     "cross-env": "^7.0.3",
+    "dat.gui": "^0.7.7",
     "easytimer": "^1.1.1",
     "gsap": "^3.6.1",
     "jquery": "^3.6.0",
+    "keycode-js": "^3.1.0",
+    "lottie-web": "^5.7.14",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
-    "swiper": "^6.5.6"
+    "raw-loader": "^4.0.2",
+    "swiper": "^6.5.6",
+    "three": "^0.130.0"
   }
 }

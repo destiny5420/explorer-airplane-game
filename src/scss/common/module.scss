@@ -1,7 +1,7 @@
 * {
   // @include border();
 
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
 }
 
@@ -13,17 +13,19 @@ body {
 
 // ===== Container =====
 .container {
-  @include size(100%, auto);
+  @include size(100%, 100vh);
 
   z-index: 1;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(rgb(183, 215, 245), #acd3f8);
 }
 
-.webgl {
-  position: fixed;
-  top: 0;
-  left: 0;
+.webgl-container {
+  @include size(100%, 100vh);
+
+  z-index: 1;
+  position: relative;
   outline: none;
 }
 

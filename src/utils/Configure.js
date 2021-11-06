@@ -1,10 +1,19 @@
 export default {
-  // === Youtube ===
-  YOUTUBE_VIDEO_ID: 'EH1c2lU3K3A',
-
   // === Project ===
-  BACKME_PROJECT_NAME: 'lifesastruggle',
-  BACKME_PORJECT_ID: '1717',
-  BACKME_TOKEN_ID: 'a2f1262baf361a791995683d7dd9cb21',
-  COUNTDOWN_EVENT_DATE_END: new Date('2021/6/28'),
+  SERVER_API_BASE: 'https://boat-game-server.herokuapp.com',
+  // SERVER_API_BASE: 'http://localhost:3000',
+
+  // === Audio ===
+  AUDIO_FX_PLAY_BUTTON: 'PLAY_BUTTON',
+  AUDIO_FX_GET_ENERGY: 'AUDIO_FX_GET_ENERGY',
+  AUDIO_FX_HIT: 'AUDIO_FX_HIT',
+  AUDIO_BGM_01: 'AUDIO_BGM_01',
+
+  // === Lottie ===
+  ANIM_CLIP_LOGO_TEXT: 'LOGO_TEXT',
+  ANIM_CLIP_LOGO_CIRCLE: 'LOGO_CIRCLE',
+
+  // === Local Storage ===
+  LOCAL_STORAGE_NAME: 'explorer_name',
+  LOCAL_STORAGE_EMAIL: 'explorer_email',
 }

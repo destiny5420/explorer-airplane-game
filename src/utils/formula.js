@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-plusplus */
 /* eslint-disable vars-on-top */
 /* eslint-disable no-var */
 import $ from 'jquery'
@@ -67,6 +69,11 @@ const Maths = {
   },
   clamp: function (value, min, max) {
     return Math.min(Math.max(value, min), max)
+  },
+  getRandomInt: function (min, max) {
+    const tmin = Math.ceil(min)
+    const tmax = Math.floor(max)
+    return Math.floor(Math.random() * (tmax - tmin) + tmin)
   },
 }
 
@@ -171,6 +178,29 @@ const Loader = {
 const Event = {
   jqCustomEvent: function (type, data) {
     return $.extend($.Event(type || '', data || {}))
+  },
+  parseCookie: function () {
+    var cookieObj = {}
+    var cookieAry = document.cookie.split(';')
+    var cookie
+
+    for (var i = 0, l = cookieAry.length; i < l; ++i) {
+      cookie = $.trim(cookieAry[i])
+      cookie = cookie.split('=')
+      cookieObj[cookie[0]] = cookie[1]
+    }
+
+    return cookieObj
+  },
+  setCookie: function (key, value) {
+    document.cookie = `${key}=${encodeURIComponent(value)}`
+  },
+  getCookieByName: function (name) {
+    var value = this.parseCookie()[name]
+    if (value) {
+      value = decodeURIComponent(value)
+    }
+    return value
   },
 }
 

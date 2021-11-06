@@ -3,33 +3,296 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{Title | Slogan}</title>
-    <meta name="description" content="{description}" />
-    <meta name="keywords" content="key-1, key-2, key-3" />
-    <meta property="og:title" content="{Title | Slogan}" />
-    <meta property="og:description" content="{description}" />
+    <title>The explorer</title>
+    <meta
+      name="description"
+      content="崇尚自由的飛行探險家，阿德瓦。執行飛行訓練是日常的課表，同時也是訓練飛行技巧的好機會，這次卻不小心偏離的航道，亂入有隕石亂流的區域，阿德瓦必須獲得電池來提升飛機的能量，來保持飛行的動力"
+    />
+    <meta name="keywords" content="airplane, explorer, meteorite" />
+    <meta property="og:title" content="The explorer" />
+    <meta
+      property="og:description"
+      content="崇尚自由的飛行探險家，阿德瓦。執行飛行訓練是日常的課表，同時也是訓練飛行技巧的好機會，這次卻不小心偏離的航道，亂入有隕石亂流的區域，阿德瓦必須獲得電池來提升飛機的能量，來保持飛行的動力"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="{Title | Slogan}" />
-    <meta property="og:image" content="{host}/static/ogshare/ogshare.png" />
-    <meta property="og:url" content="{host}" />
+    <meta property="og:site_name" content="The explorer" />
+    <meta
+      property="og:image"
+      content="http://explorer.stackergames.org/static/ogshare/ogshare.png"
+    />
+    <meta property="og:url" content="http://explorer.stackergames.org" />
     <meta property="og:locale" content="zh_tw" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:url" content="{host}" />
-    <meta name="twitter:title" content="{Title | Slogan}" />
-    <meta name="twitter:description" content="{description}" />
-    <meta name="twitter:image" content="{host}/static/ogshare/ogshare.png" />
-    <meta name="twitter:image:alt" content="{description}" />
+    <meta name="twitter:url" content="http://explorer.stackergames.org" />
+    <meta name="twitter:title" content="The explorer" />
+    <meta
+      name="twitter:description"
+      content="崇尚自由的飛行探險家，阿德瓦。執行飛行訓練是日常的課表，同時也是訓練飛行技巧的好機會，這次卻不小心偏離的航道，亂入有隕石亂流的區域，阿德瓦必須獲得電池來提升飛機的能量，來保持飛行的動力"
+    />
+    <meta
+      name="twitter:image"
+      content="http://explorer.stackergames.org/static/ogshare/ogshare.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="崇尚自由的飛行探險家，阿德瓦。執行飛行訓練是日常的課表，同時也是訓練飛行技巧的好機會，這次卻不小心偏離的航道，亂入有隕石亂流的區域，阿德瓦必須獲得電池來提升飛機的能量，來保持飛行的動力"
+    />
     <link rel="icon" type="image/x-icon" href="/static/favicon/favicon.png" />
     <link rel="stylesheet" href="/static/css/reset.min.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Acme&family=Roboto:wght@100;500;700&family=Lato:wght@700;900&display=swap"
       rel="stylesheet"
     />
+    <!-- Google Tag Manager -->
+    <script>
+      ;(function (w, d, s, l, i) {
+        w[l] = w[l] || []
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : ''
+        j.async = true
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+        f.parentNode.insertBefore(j, f)
+      })(window, document, 'script', 'dataLayer', 'GTM-K854C6M')
+    </script>
+    <!-- End Google Tag Manager -->
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-K854C6M"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="lottie-container"></div>
     <div class="container">
-      <canvas class="webgl"></canvas>
+      <div id="loading" class="loading"></div>
+      <div class="ui">
+        <div class="lb-panel color-gray">
+          <div class="anim">
+            <p id="credits" class="word cursor-pointer f-lato f-900">CREDITS</p>
+          </div>
+        </div>
+        <div class="rb-panel">
+          <div class="anim">
+            <button id="btn-reset-data" class="btn-reset cursor-pointer f-lato f-900">RESET</button>
+            <div id="audio-sign" class="audio-sign flex-center">
+              <div id="audio-mute" class="audio-mute flex-center">
+                <img src="./images/ui/mute.png" alt="mute" class="w-full" />
+              </div>
+              <div id="audio-unmute" class="audio-unmute flex-center">
+                <img src="./images/ui/unmute.png" alt="unmute" class="w-full" />
+              </div>
+              <div class="inner"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mb-panel">
+          <div class="anim">
+            <p>Copyright © 2021, Stacker Games, Co,. Ltd. All Rights Reserved.</p>
+          </div>
+        </div>
+        <div id="credit-panel" class="credit-panel transing-50">
+          <div class="wrap">
+            <div class="content">
+              <div class="title flex-center">
+                <img src="./images/main/credit/title.png" alt="title" class="w-full" />
+              </div>
+              <div class="character">
+                <h3 class="f-lato color-orange f-900">INTERACTIVE DIRECTION & PROGRAMMER</h3>
+                <a class="f-lato f-900" href="https://github.com/destiny5420" target="_blank"
+                  >PAPER HSIAO</a
+                >
+              </div>
+              <div class="character">
+                <h3 class="f-lato color-orange f-900">UI DESIGN</h3>
+                <a class="f-lato f-900" href="https://www.behance.net/HuangYuQian" target="_blank"
+                  >BAY HUANG</a
+                >
+              </div>
+              <div class="inspired f-lato">
+                inspired by
+                <a href="https://github.com/yakudoo/TheAviator" target="_blank" class="link f-lato"
+                  >TheAviator</a
+                >
+              </div>
+            </div>
+            <div class="btn-close"></div>
+          </div>
+        </div>
+        <div class="login-panel">
+          <div class="wrap">
+            <form class="form">
+              <div class="input-block">
+                <input
+                  type="text"
+                  name="名稱"
+                  id="input-login-name"
+                  class="input-login-name f-lato"
+                  placeholder="Your name"
+                />
+                <label class="error-name">PLEASE FILL OUT THIS FIELD.</label>
+              </div>
+              <div class="input-block">
+                <input
+                  type="email"
+                  name="信箱"
+                  id="input-login-email"
+                  class="input-login-email f-lato"
+                  placeholder="Your email"
+                />
+                <label class="error-email"> PLEASE ENTER BACKER-FOUNDER EMAIL. </label>
+              </div>
+              <div class="btn-login-block">
+                <button id="btn-login" class="btn-login">
+                  <div class="img flex-center">
+                    <img src="./images/ui/login.png" alt="login" class="w-full" />
+                  </div>
+                </button>
+                <div class="shadow"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <h3 class="ui-score">0</h3>
+        <div class="energy-bar">
+          <div class="wrap">
+            <div class="battery-block active">
+              <div id="battery-fx" class="battery-fx w-full">
+                <div class="image flex-center">
+                  <img src="./images/ui/battery.png" alt="battery" class="w-full" />
+                </div>
+                <div class="inner w-full"></div>
+              </div>
+              <div class="battery w-full">
+                <div id="battery-circle-fx" class="circle-fx">
+                  <div class="anim w-full">
+                    <svg viewBox="0 0 300 300">
+                      <circle
+                        r="100"
+                        cx="150"
+                        cy="150"
+                        fill="none"
+                        stroke="#fff"
+                        stroke-width="15px"
+                      ></circle>
+                    </svg>
+                  </div>
+                </div>
+                <div class="skill-energy">
+                  <svg class="level-circle" id="levelCircle" viewBox="0 0 300 300">
+                    <circle
+                      id="levelCircleBgr"
+                      r="120"
+                      cx="150"
+                      cy="150"
+                      fill="none"
+                      stroke="#fff"
+                      stroke-width="60px"
+                    ></circle>
+                    <circle
+                      id="levelCircleStroke"
+                      r="120"
+                      cx="150"
+                      cy="150"
+                      fill="none"
+                      #f25346=""
+                      stroke="#69cf5e"
+                      stroke-width="30px"
+                      stroke-dasharray="751"
+                    ></circle>
+                  </svg>
+                </div>
+                <div class="image flex-center">
+                  <img src="./images/ui/battery.png" alt="battery" class="w-full" />
+                </div>
+                <div class="inner w-full"></div>
+              </div>
+            </div>
+            <div class="bar-container">
+              <div class="inner">
+                <div class="bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="head">
+          <div class="wrap">
+            <div class="main-block">
+              <div class="logo-block">
+                <div id="logo-circle" class="logo-circle"></div>
+                <div id="logo-text" class="logo-text"></div>
+              </div>
+              <div class="btn-play-block">
+                <div id="btn-play" class="btn-play">
+                  <div class="image flex-center">
+                    <img src="./images/ui/play.png" alt="play" class="flex-center w-full" />
+                  </div>
+                </div>
+                <div class="shadow"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="leaderboard">
+          <div class="wrap">
+            <div class="title">
+              <div class="word flex-center">
+                <img
+                  src="./images/main/leaderboard/title-word.png"
+                  alt="title-word"
+                  class="w-full"
+                />
+              </div>
+              <div class="circle flex-center">
+                <div class="anim flex-center w-full">
+                  <img
+                    src="./images/main/leaderboard/title-circle.png"
+                    alt="title-circle"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="button-block">
+              <div id="btn-again" class="btn-again">
+                <div class="image flex-center">
+                  <img src="./images/ui/again.png" alt="again" class="w-full" />
+                </div>
+                <div class="bottom"></div>
+              </div>
+              <div class="shadow"></div>
+            </div>
+            <div class="info-wrap"></div>
+            <div class="list-wrap"></div>
+            <div class="self-wrap">
+              <div class="list award-list list-myself">
+                <div class="award text-center f-lato">YOU</div>
+                <div class="rank text-center f-lato"><p class="rankValue"></p></div>
+                <div class="name text-center f-lato"><p class="nameValue">paper</p></div>
+                <div class="score text-center f-lato"><p class="scoreValue">5818</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="leader-board-user-panel">
+        <div class="mask"></div>
+        <div class="wrap">
+          <p class="name f-lato f-700">paperhsio</p>
+          <p class="email f-lato f-700">paper@backer-founder.com</p>
+          <p class="score f-lato f-700">9999</p>
+        </div>
+      </div>
+      <div class="webgl-container">
+        <canvas class="webgl"></canvas>
+      </div>
     </div>
   </body>
 </html>

@@ -1,3 +1,13 @@
 /*!
  * The keyframe collection
  */
+
+@keyframes anim-shine {
+  0% {
+    transform: skewX(-30deg) translateX(-50px);
+  }
+
+  100% {
+    transform: skewX(-30deg) translateX(600px);
+  }
+}
