@@ -385,7 +385,7 @@ function showLeaderBoard(score) {
     tmpLeaderBoard.push({
       name: userData.name,
       score: score,
-      email: el.email,
+      email: userData.email,
     })
   }
 
