@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const Dotenv = require('dotenv-webpack')
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -124,5 +125,9 @@ module.exports = {
     }),
     new OptimizeCssAssetsPlugin(),
     new CleanWebpackPlugin(),
+    new Dotenv({
+      path: process.env.NODE_ENV === 'development' ? './.env.development' : './.env.production',
+      systemvars: true, // allow read "process.env" variable.
+    }),
   ],
 }
