@@ -109,10 +109,6 @@ const userData = {
   email: 'postman-raw-email',
 }
 
-// const gui = new dat.GUI()
-// const cameraFolder = gui.addFolder('Camera')
-// cameraFolder.open()
-
 function animAirplaneToType1() {
   gsap.fromTo(
     airPlane.mesh.scale,
@@ -176,6 +172,7 @@ function checkLogin() {
   let userName = localStorage.getItem(Configure.LOCAL_STORAGE_NAME)
   let userEmail = localStorage.getItem(Configure.LOCAL_STORAGE_EMAIL)
   let isLogin = false
+
   // if don't login
   if (!userName) {
     $('.login-panel').addClass('active')
@@ -263,18 +260,23 @@ async function updateLeaderBoard() {
 }
 
 async function updateScore(score) {
-  // await userRequest({
-  //   method: 'post',
-  //   url: '/update',
-  //   data: {
-  //     email: userData.email,
-  //     score,
-  //   },
-  // })
-  //   .then(function (response) {
-  //     // console.log(response.data)
-  //   })
-  //   .catch((err) => console.error(err))
+  /**
+   * Because stop mongoDB service, mark following code.
+   */
+  /*
+  await userRequest({
+    method: 'post',
+    url: '/update',
+    data: {
+      email: userData.email,
+      score,
+    },
+  })
+    .then(function (response) {
+      // console.log(response.data)
+    })
+    .catch((err) => console.error(err))
+  */
 }
 
 function insertLeaderBoard(rank = 99, name = 'null', score = 0, email = '') {
@@ -346,9 +348,6 @@ function showLeaderBoard(score) {
 
   const tmpLeaderBoard = []
   let userInLeaderBoard = false
-
-  // console.log(`users: `, leaderBoardData.users)
-  // console.log(`userData: `, userData)
 
   leaderBoardData.users.forEach((el) => {
     if (el.email === userData.email) {
@@ -488,43 +487,6 @@ const Sky = function () {
 const AirPlane = function () {
   this.mesh = new THREE.Object3D()
 
-  // // Create the cabin
-  // const geomCockpit = new THREE.BoxGeometry(60, 50, 50, 1, 1, 1)
-  // const matCockpit = new THREE.MeshPhongMaterial({
-  //   color: Colors.red,
-  //   flatShading: THREE.FlatShading,
-  // })
-  // const cockpit = new THREE.Mesh(geomCockpit, matCockpit)
-  // cockpit.castShadow = true
-  // cockpit.receiveShadow = true
-  // this.mesh.add(cockpit)
-
-  // // Create the engine
-  // const geomEngine = new THREE.BoxGeometry(20, 50, 50, 1, 1, 1)
-  // const matEngine = new THREE.MeshPhongMaterial({
-  //   color: Colors.white,
-  //   flatShading: THREE.FlatShading,
-  // })
-  // const engine = new THREE.Mesh(geomEngine, matEngine)
-  // engine.position.x = 40
-  // engine.castShadow = true
-  // engine.receiveShadow = true
-  // this.mesh.add(engine)
-
-  // // Create the tail
-  // const geomTailPlane = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1)
-  // const matTailPlane = new THREE.MeshPhongMaterial({
-  //   color: Colors.red,
-  //   flatShading: THREE.FlatShading,
-  // })
-  // const tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane)
-  // tailPlane.position.set(-35, 25, 0)
-  // tailPlane.castShadow = true
-  // tailPlane.receiveShadow = true
-  // this.mesh.add(tailPlane)
-
-  // // Create the wing
-  // const geomSideWing = new THREE.BoxGeometry(40, 8, 150, 1, 1, 1)
   const matSideWing = new THREE.MeshPhongMaterial({
     color: '#719FB0',
     flatShading: THREE.FlatShading,
@@ -648,12 +610,11 @@ const Enemy = function () {
   })
 
   const meshIndex = Maths.getRandomInt(0, 3)
-  // console.log(`MeshIndex: `, meshIndex)
+
   this.mesh = enemyMeshs[meshIndex].clone()
   const scaleUnit = 8 + Math.random() * 5
   this.mesh.scale.set(scaleUnit, scaleUnit, scaleUnit)
   this.mesh.material = mat
-  // this.mesh = new THREE.Mesh(geom, mat)
   this.mesh.castShadow = true
   this.angle = 0
   this.dist = 0
@@ -1422,13 +1383,6 @@ function createScene() {
   camera.rotation.y = cameraStartup.part1.rotY
   camera.rotation.z = cameraStartup.part1.rotZ
 
-  // cameraFolder.add(camera.position, 'x').min(-365).max(365).step(1)
-  // cameraFolder.add(camera.position, 'y').min(-365).max(365).step(1)
-  // cameraFolder.add(camera.position, 'z').min(-365).max(365).step(1)
-  // cameraFolder.add(camera.rotation, 'x').min(-2).max(2).step(0.1)
-  // cameraFolder.add(camera.rotation, 'y').min(-2).max(2).step(0.1)
-  // cameraFolder.add(camera.rotation, 'z').min(-2).max(2).step(0.1)
-  // renderer
   renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
@@ -1605,11 +1559,6 @@ function onWaitingReplay() {
 
 let ticker
 function update(t) {
-  // console.log(`update / t: ${t}`)
-  // newTime = new Date().getTime()
-  // deltaTime = newTime - oldTime
-  // oldTime = newTime
-
   switch (game.status) {
     case 'start':
       onStart()
@@ -1641,6 +1590,7 @@ function update(t) {
   if (coinManager) {
     coinManager.rotateCoins()
   }
+
   // coinManager.rotateCoins()
   enemyManager.rotateEnemy()
 
