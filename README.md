@@ -10,9 +10,16 @@ This 3d web game developed with three.js & blender, the protagonist's name is Ad
 ## Overview
 
 1. How to use
-   - Create database using [MongoDB Cloud Service](https://www.mongodb.com/cloud/atlas/register)（MongoDB Atlas）
+   - Create database using [**MongoDB Cloud Service**](https://www.mongodb.com/cloud/atlas/register)（MongoDB Atlas）
    - Download game server
    - On your computer
+2. Architecture design & explanation
+   - Collision detection
+   - LeaderBoard
+3. Learn More
+   - LottieFiles
+   - Responsive Web Design
+4. LICENSE:MIT
 
 ## How to use
 
@@ -57,3 +64,21 @@ Detail overview [here](https://github.com/destiny5420/explorer-airplane-game-ser
    ```
 
 [http://localhost:9000](http://localhost:9000) will automatically open on your computer.
+
+## Architecture design & explanation
+
+### Collision detection
+
+### LeaderBoard
+
+## Learn More
+
+### LottieFiles
+
+### Responsive Web Design
+
+The player can't easily control the game on the mobile, so currently RWD just supports lon the desktops, not on the mobile phones.
+
+## LICENSE：MIT
+
+This package is [MIT licensed](https://github.com/destiny5420/explorer-airplane-game/blob/master/LICENSE).
