@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config webpack.dev.js --open",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
-    "deploy": "aws s3 sync ./dist s3://explorer.stackergames.org --delete --profile paper-hsiao"
+    "deploy": "aws s3 sync ./dist s3://explorer.stackergames.org --delete --profile paper"
   },
   "author": "",
   "license": "ISC",
